@@ -1,0 +1,9 @@
+name: AurionGo
+description: $description
+version: '${version}'
+
+main: dev.toxi.aurionGo.AurionGo
+api-version: '1.21.11'
+load: POSTWORLD
+
+authors: [ nora ]

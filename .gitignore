@@ -1,16 +1,8 @@
-# Compiled class file
+# Java
 *.class
-
-# Log file
-*.log
-
-# BlueJ files
 *.ctxt
 
-# Mobile Tools for Java (J2ME)
-.mtj.tmp/
-
-# Package Files #
+# Archives and packages
 *.jar
 *.war
 *.nar
@@ -19,6 +11,35 @@
 *.tar.gz
 *.rar
 
-# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
+# Gradle
+.gradle/
+build/
+out/
+
+# IntelliJ IDEA
+.idea/
+*.iml
+
+# Eclipse
+.classpath
+.project
+.settings/
+
+# VS Code
+.vscode/
+
+# Paper / local server runtime
+run/
+logs/
+plugins/
+world/
+world_nether/
+world_the_end/
+
+# JVM crash dumps
 hs_err_pid*
 replay_pid*
+
+# OS files
+.DS_Store
+Thumbs.db
