@@ -23,12 +23,12 @@ public final class ReplyCommand implements CommandExecutor {
         }
 
         if (!(sender instanceof Player player)) {
-            this.chatService.sendChatNotice(sender, "messages.player-only", Map.of(), Map.of());
+            this.chatService.sendChatNotice(sender, "errors.player-only", Map.of(), Map.of());
             return true;
         }
 
         if (args.length == 0) {
-            this.chatService.sendChatNotice(player, "commands.reply.usage", Map.of(), Map.of());
+            this.chatService.sendChatNotice(player, "chat.commands.reply.usage", Map.of(), Map.of());
             return true;
         }
 

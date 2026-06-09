@@ -10,6 +10,7 @@ import dev.toxi.aurionGo.feature.player.PlayerDataModule;
 import dev.toxi.aurionGo.feature.punishment.PunishmentModule;
 import dev.toxi.aurionGo.feature.warn.WarnModule;
 import dev.toxi.aurionGo.message.ConfigBackedMessageService;
+import dev.toxi.aurionGo.message.MessageFormatter;
 import dev.toxi.aurionGo.message.MessageService;
 import dev.toxi.aurionGo.module.ModuleManager;
 import dev.toxi.aurionGo.shared.AurionContext;
@@ -41,6 +42,13 @@ public final class AurionBootstrap {
         serviceRegistry.register(
                 MessageService.class,
                 new ConfigBackedMessageService(configManager.require(StandardConfigs.MESSAGES))
+        );
+        serviceRegistry.register(
+                MessageFormatter.class,
+                new MessageFormatter(
+                        configManager.require(StandardConfigs.CORE),
+                        serviceRegistry.require(MessageService.class)
+                )
         );
         this.databaseManager = new DatabaseManager(configManager.require(StandardConfigs.CORE));
         this.databaseManager.initialize();

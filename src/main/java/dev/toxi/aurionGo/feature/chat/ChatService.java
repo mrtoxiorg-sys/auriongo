@@ -2,7 +2,7 @@ package dev.toxi.aurionGo.feature.chat;
 
 import dev.toxi.aurionGo.config.ConfigFile;
 import dev.toxi.aurionGo.config.StandardConfigs;
-import dev.toxi.aurionGo.message.MessageService;
+import dev.toxi.aurionGo.message.MessageFormatter;
 import dev.toxi.aurionGo.shared.AurionContext;
 import io.papermc.paper.event.player.AsyncChatEvent;
 import net.kyori.adventure.audience.Audience;
@@ -26,8 +26,7 @@ import java.util.UUID;
 public final class ChatService {
     private final AurionContext context;
     private final ConfigFile chatConfig;
-    private final ConfigFile messagesConfig;
-    private final MessageService messageService;
+    private final MessageFormatter messageFormatter;
     private final PlaceholderApiBridge placeholderApiBridge;
     private final ReplyTracker replyTracker = new ReplyTracker();
     private final MiniMessage miniMessage = MiniMessage.miniMessage();
@@ -37,8 +36,7 @@ public final class ChatService {
     public ChatService(AurionContext context) {
         this.context = context;
         this.chatConfig = context.configManager().require(StandardConfigs.CHAT);
-        this.messagesConfig = context.configManager().require(StandardConfigs.MESSAGES);
-        this.messageService = context.serviceRegistry().require(MessageService.class);
+        this.messageFormatter = context.serviceRegistry().require(MessageFormatter.class);
         this.placeholderApiBridge = new PlaceholderApiBridge(context.plugin());
     }
 
@@ -60,8 +58,8 @@ public final class ChatService {
 
             if (!foundOtherRecipients) {
                 sender.sendActionBar(parseTemplate(
-                        this.chatConfig.configuration().getString(
-                                "messages.local-no-recipients-actionbar",
+                        this.messageFormatter.getOrDefault(
+                                "chat.messages.local-no-recipients-actionbar",
                                 "<color:#FF4F4F>⌁ Рядом игроков не найдено.</color>"
                         ),
                         sender,
@@ -88,7 +86,7 @@ public final class ChatService {
 
         return createChatLine(
                 player,
-                "join-message.format",
+                "chat.join-message.format",
                 Map.of("player", player.getName(), "world", player.getWorld().getName()),
                 Map.of()
         );
@@ -101,7 +99,7 @@ public final class ChatService {
 
         return createChatLine(
                 player,
-                "quit-message.format",
+                "chat.quit-message.format",
                 Map.of("player", player.getName(), "world", player.getWorld().getName()),
                 Map.of()
         );
@@ -112,7 +110,7 @@ public final class ChatService {
                 .decoration(TextDecoration.ITALIC, true);
         Component rendered = createChatLine(
                 sender,
-                "formats.do",
+                "chat.formats.do",
                 Map.of("player", sender.getName(), "world", sender.getWorld().getName()),
                 Map.of("message", message)
         );
@@ -135,7 +133,7 @@ public final class ChatService {
         if (sender.getUniqueId().equals(target.getUniqueId())) {
             Component note = createChatLine(
                     sender,
-                    "formats.private-message-self",
+                    "chat.formats.private-message-self",
                     Map.of("player", sender.getName()),
                     Map.of("message", message)
             );
@@ -145,13 +143,13 @@ public final class ChatService {
 
         Component sent = createChatLine(
                 sender,
-                "formats.private-message-sent",
+                "chat.formats.private-message-sent",
                 Map.of("player", sender.getName(), "target", target.getName()),
                 Map.of("message", message)
         );
         Component received = createChatLine(
                 target,
-                "formats.private-message-received",
+                "chat.formats.private-message-received",
                 Map.of("player", sender.getName(), "target", target.getName()),
                 Map.of("message", message)
         );
@@ -166,7 +164,7 @@ public final class ChatService {
         UUID replyTargetId = this.replyTracker.getReplyTarget(sender.getUniqueId());
 
         if (replyTargetId == null) {
-            sendChatNotice(sender, "messages.reply-target-missing", Map.of(), Map.of());
+            sendChatNotice(sender, "chat.messages.reply-target-missing", Map.of(), Map.of());
             return false;
         }
 
@@ -174,7 +172,7 @@ public final class ChatService {
 
         if (target == null) {
             this.replyTracker.clear(sender.getUniqueId());
-            sendChatNotice(sender, "messages.reply-target-offline", Map.of(), Map.of());
+            sendChatNotice(sender, "chat.messages.reply-target-offline", Map.of(), Map.of());
             return false;
         }
 
@@ -187,23 +185,14 @@ public final class ChatService {
 
     public void sendChatNotice(CommandSender sender, String path, Map<String, String> stringPlaceholders, Map<String, Component> componentPlaceholders) {
         Component prefix = parseTemplate(
-                this.messageService.getOrDefault("prefix", ""),
+                this.messageFormatter.getOrDefault("prefix", ""),
                 null,
                 Map.of(),
                 Map.of()
         );
-        String text = this.chatConfig.configuration().getString(path);
-
-        if (text == null) {
-            text = this.messagesConfig.configuration().getString(path, "<red>В конфиге отсутствует сообщение: " + path);
-        }
-
+        String text = this.messageFormatter.getOrDefault(path, "<red>В конфиге отсутствует сообщение: " + path);
         Component body = parseTemplate(text, null, stringPlaceholders, componentPlaceholders);
         sender.sendMessage(Component.empty().append(prefix).append(body));
-    }
-
-    public String getChatString(String path) {
-        return this.chatConfig.configuration().getString(path);
     }
 
     public void clearReplyTarget(Player player) {
@@ -215,7 +204,7 @@ public final class ChatService {
     }
 
     private Component createChatLine(Player player, String path, Map<String, String> stringPlaceholders, Map<String, Component> componentPlaceholders) {
-        String template = this.chatConfig.configuration().getString(path, "<red>В конфиге отсутствует шаблон чата: " + path);
+        String template = this.messageFormatter.getOrDefault(path, "<red>В конфиге отсутствует шаблон чата: " + path);
         return parseTemplate(template, player, stringPlaceholders, componentPlaceholders);
     }
 
@@ -269,7 +258,7 @@ public final class ChatService {
 
         FileConfiguration config = this.chatConfig.configuration();
         String parserMode = config.getString("formatting.parser", "MINI_MESSAGE");
-        String prepared = applyPlaceholders(template, player);
+        String prepared = this.messageFormatter.resolveTemplate(applyPlaceholders(template, player));
 
         if ("LEGACY".equalsIgnoreCase(parserMode)) {
             for (Map.Entry<String, Component> entry : componentPlaceholders.entrySet()) {
@@ -333,14 +322,14 @@ public final class ChatService {
             String stripped = rawMessage.substring(globalPrefix.length()).stripLeading();
 
             if (!stripped.isEmpty()) {
-                return new ChatRoute(true, stripped, "channels.global.format", 0.0D);
+                return new ChatRoute(true, stripped, "chat.channels.global.format", 0.0D);
             }
         }
 
         return new ChatRoute(
                 false,
                 rawMessage,
-                "channels.local.format",
+                "chat.channels.local.format",
                 config.getDouble("channels.local.radius", 150.0D)
         );
     }

@@ -1,5 +1,6 @@
 package dev.toxi.aurionGo.feature.punishment;
 
+import dev.toxi.aurionGo.message.MessageFormatter;
 import dev.toxi.aurionGo.shared.AurionContext;
 import dev.toxi.aurionGo.storage.player.PlayerProfileRecord;
 import dev.toxi.aurionGo.storage.player.PlayerProfileRepository;
@@ -9,7 +10,6 @@ import dev.toxi.aurionGo.storage.punishment.PunishmentRecord;
 import dev.toxi.aurionGo.storage.punishment.PunishmentRepository;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.HoverEvent;
-import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
@@ -31,13 +31,14 @@ public final class PunishmentService {
     private final AurionContext context;
     private final PunishmentRepository punishmentRepository;
     private final PlayerProfileRepository playerProfileRepository;
-    private final MiniMessage miniMessage = MiniMessage.miniMessage();
+    private final MessageFormatter messageFormatter;
     private final ConcurrentMap<UUID, CachedMuteState> muteCache = new ConcurrentHashMap<>();
 
     public PunishmentService(AurionContext context, PunishmentRepository punishmentRepository, PlayerProfileRepository playerProfileRepository) {
         this.context = context;
         this.punishmentRepository = punishmentRepository;
         this.playerProfileRepository = playerProfileRepository;
+        this.messageFormatter = context.serviceRegistry().require(MessageFormatter.class);
     }
 
     public void applyBan(CommandSender sender, String targetInput, String reason, Long durationMillis) {
@@ -292,7 +293,7 @@ public final class PunishmentService {
         UUID moderatorUuid = sender instanceof Player player ? player.getUniqueId() : null;
         String moderatorName = sender instanceof ConsoleCommandSender ? "CONSOLE" : sender.getName();
         String finalReason = (reason == null || reason.isBlank())
-                ? config().getString("defaults.reason", "Не указана")
+                ? this.messageFormatter.getOrDefault("punishments.defaults.reason", "Не указана")
                 : reason;
 
         PunishmentCreateRequest request = new PunishmentCreateRequest(
@@ -417,25 +418,14 @@ public final class PunishmentService {
     }
 
     private Component renderFromPunishments(String path, Map<String, String> placeholders) {
-        String template = config().getString(path, "<color:#FF4F4F>Отсутствует шаблон: " + path);
-        String resolved = template;
-
-        for (Map.Entry<String, String> entry : placeholders.entrySet()) {
-            resolved = resolved.replace("{" + entry.getKey() + "}", this.miniMessage.escapeTags(entry.getValue()));
-        }
-
-        return this.miniMessage.deserialize(resolved);
+        return this.messageFormatter.render(
+                "punishments." + path,
+                placeholders
+        );
     }
 
     private Component renderFromMessages(String path, Map<String, String> placeholders) {
-        String template = this.context.configManager().require("messages").configuration().getString(path, "<color:#FF4F4F>Отсутствует шаблон: " + path);
-        String resolved = template;
-
-        for (Map.Entry<String, String> entry : placeholders.entrySet()) {
-            resolved = resolved.replace("{" + entry.getKey() + "}", this.miniMessage.escapeTags(entry.getValue()));
-        }
-
-        return this.miniMessage.deserialize(resolved);
+        return this.messageFormatter.render(path, placeholders);
     }
 
     private FileConfiguration config() {
@@ -444,10 +434,10 @@ public final class PunishmentService {
 
     private String formatExpires(Long expiresAt) {
         if (expiresAt == null) {
-            return config().getString("defaults.permanent", "Навсегда");
+            return this.messageFormatter.getOrDefault("punishments.defaults.permanent", "Навсегда");
         }
 
-        String pattern = config().getString("formats.date-format", "dd.MM.yyyy HH:mm:ss");
+        String pattern = this.messageFormatter.getOrDefault("punishments.formats.date-format", "dd.MM.yyyy HH:mm:ss");
         return DateTimeFormatter.ofPattern(pattern)
                 .withZone(ZoneId.systemDefault())
                 .format(Instant.ofEpochMilli(expiresAt));
@@ -455,7 +445,7 @@ public final class PunishmentService {
 
     private String formatDetailsTime(PunishmentRecord record) {
         if (record.type() == PunishmentType.KICK) {
-            return config().getString("defaults.instant", "Моментально");
+            return this.messageFormatter.getOrDefault("punishments.defaults.instant", "Моментально");
         }
 
         return formatExpires(record.expiresAt());
@@ -466,11 +456,11 @@ public final class PunishmentService {
     }
 
     private String typeDisplay(PunishmentType type) {
-        return config().getString("formats.type-names." + type.key(), type.name().toLowerCase());
+        return this.messageFormatter.getOrDefault("punishments.formats.type-names." + type.key(), type.name().toLowerCase());
     }
 
     private String typeDisplayPlural(PunishmentType type) {
-        return config().getString("formats.type-names-plural." + type.key(), type.name().toLowerCase());
+        return this.messageFormatter.getOrDefault("punishments.formats.type-names-plural." + type.key(), type.name().toLowerCase());
     }
 
     private record CachedMuteState(PunishmentRecord record, long checkedAt) {

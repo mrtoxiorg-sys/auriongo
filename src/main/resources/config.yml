@@ -1,4 +1,4 @@
-config-version: 2
+config-version: 3
 
 modules:
   player-data:
@@ -13,6 +13,12 @@ modules:
     enabled: true
   integrations:
     enabled: true
+
+theme:
+  fcolors:
+    "1": "color:#4FD6FF"
+    "2": "color:#4FFF88"
+    "3": "color:#FF4F4F"
 
 storage:
   type: SQLITE

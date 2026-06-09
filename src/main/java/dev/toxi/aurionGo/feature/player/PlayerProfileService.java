@@ -1,11 +1,11 @@
 package dev.toxi.aurionGo.feature.player;
 
 import dev.toxi.aurionGo.shared.AurionContext;
+import dev.toxi.aurionGo.message.MessageFormatter;
 import dev.toxi.aurionGo.storage.player.PlayerProfileRecord;
 import dev.toxi.aurionGo.storage.player.PlayerProfileRepository;
 import dev.toxi.aurionGo.storage.player.PlayerProfileSnapshot;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -19,11 +19,12 @@ import java.util.Optional;
 public final class PlayerProfileService {
     private final AurionContext context;
     private final PlayerProfileRepository repository;
-    private final MiniMessage miniMessage = MiniMessage.miniMessage();
+    private final MessageFormatter messageFormatter;
 
     public PlayerProfileService(AurionContext context, PlayerProfileRepository repository) {
         this.context = context;
         this.repository = repository;
+        this.messageFormatter = context.serviceRegistry().require(MessageFormatter.class);
     }
 
     public void trackJoin(Player player) {
@@ -100,24 +101,11 @@ public final class PlayerProfileService {
     }
 
     private Component render(String path, Map<String, String> placeholders) {
-        String template = this.context.configManager()
-                .require("messages")
-                .configuration()
-                .getString(path, "<color:#FF4F4F>В конфиге отсутствует сообщение: " + path);
-        String resolved = template;
-
-        for (Map.Entry<String, String> entry : placeholders.entrySet()) {
-            resolved = resolved.replace("{" + entry.getKey() + "}", entry.getValue());
-        }
-
-        return this.miniMessage.deserialize(resolved);
+        return this.messageFormatter.render(path, placeholders);
     }
 
     private String formatTimestamp(long epochMillis) {
-        String pattern = this.context.configManager()
-                .require("messages")
-                .configuration()
-                .getString("player-data.date-format", "dd.MM.yyyy HH:mm:ss");
+        String pattern = this.messageFormatter.getOrDefault("player-data.date-format", "dd.MM.yyyy HH:mm:ss");
 
         return DateTimeFormatter.ofPattern(pattern)
                 .withZone(ZoneId.systemDefault())

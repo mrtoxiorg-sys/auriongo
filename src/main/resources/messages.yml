@@ -1,25 +1,160 @@
-config-version: 3
+config-version: 4
 
-prefix: "<dark_gray>[</dark_gray><color:#4FD6FF>AurionGo</color><dark_gray>]</dark_gray> "
+prefix: "<dark_gray>[</dark_gray><fcolor>AurionGo</fcolor><dark_gray>]</dark_gray> "
 
 general:
-  reload-success: "<color:#4FFF88>Конфигурация успешно перезагружена."
-  module-disabled: "<color:#FF4F4F>Этот модуль отключен в конфигурации."
+  reload-success: "<fcolor:2>Конфигурация успешно перезагружена.</fcolor:2>"
+  module-disabled: "<fcolor:3>Этот модуль отключен в конфигурации.</fcolor:3>"
 
 errors:
-  no-permission: "<color:#FF4F4F>У тебя нет прав для этого действия."
-  player-only: "<color:#FF4F4F>Эту команду может использовать только игрок."
-  invalid-player: "<color:#FF4F4F>Не удалось найти указанного игрока."
+  no-permission: "<fcolor:3>У тебя нет прав для этого действия.</fcolor:3>"
+  player-only: "<fcolor:3>Эту команду может использовать только игрок.</fcolor:3>"
+  invalid-player: "<fcolor:3>Не удалось найти указанного игрока.</fcolor:3>"
+
+chat:
+  channels:
+    local:
+      format: "<fcolor>ʟ</fcolor> <white>{player}</white> <dark_gray>»</dark_gray> <message>"
+    global:
+      format: "<fcolor>ɢ</fcolor> <white>{player}</white> <dark_gray>»</dark_gray> <message>"
+  formats:
+    do: "<white>{player}</white> <dark_gray>»</dark_gray> <message>"
+    private-message-sent: "<fcolor>✉</fcolor> <dark_gray>➜</dark_gray> <white>{target}</white> <dark_gray>»</dark_gray> <message>"
+    private-message-received: "<fcolor>✉</fcolor> <dark_gray>⬳</dark_gray> <white>{player}</white> <dark_gray>»</dark_gray> <message>"
+    private-message-self: "<fcolor>✎</fcolor> <fcolor>Заметки</fcolor> <dark_gray>»</dark_gray> <message>"
+  join-message:
+    format: "<fcolor:2>+</fcolor:2> <fcolor>{player}</fcolor>"
+  quit-message:
+    format: "<fcolor:3>-</fcolor:3> <fcolor>{player}</fcolor>"
+  commands:
+    do:
+      usage: "<fcolor:3>Использование: /do <действие></fcolor:3>"
+    msg:
+      usage: "<fcolor:3>Использование: /msg <игрок> <сообщение></fcolor:3>"
+    reply:
+      usage: "<fcolor:3>Использование: /r <сообщение></fcolor:3>"
+  messages:
+    player-not-found: "<fcolor:3>Игрок <white>{target}</white> сейчас не в сети.</fcolor:3>"
+    reply-target-missing: "<fcolor:3>Тебе еще никто не писал.</fcolor:3>"
+    reply-target-offline: "<fcolor:3>Последний собеседник уже вышел с сервера.</fcolor:3>"
+    local-no-recipients-actionbar: "<fcolor:3>Вас никто не услышал.</fcolor:3>"
 
 player-data:
   date-format: "dd.MM.yyyy HH:mm:ss"
-  first-join: "<color:#4FFF88>✦</color> <white>{player}</white> <white>впервые зашел на сервер.</white>"
-  usage: "<color:#FF4F4F>Использование: /checkplayer <ник>"
-  not-found: "<color:#FF4F4F>Игрок <white>{player}</white> не найден в базе данных."
-  lookup-error: "<color:#FF4F4F>Не удалось получить данные игрока: <white>{error}</white>"
-  header: "<color:#4FD6FF>✦</color> <color:#4FD6FF>Профиль игрока</color> <white>{player}</white>"
-  nickname: "<dark_gray>⤷</dark_gray> <color:#4FD6FF>Ник:</color> <white>{value}</white>"
-  uuid: "<dark_gray>⤷</dark_gray> <color:#4FD6FF>UUID:</color> <white>{value}</white>"
-  first-join-line: "<dark_gray>⤷</dark_gray> <color:#4FD6FF>Первый заход:</color> <white>{value}</white>"
-  last-join-line: "<dark_gray>⤷</dark_gray> <color:#4FD6FF>Последний заход:</color> <white>{value}</white>"
-  ip-line: "<dark_gray>⤷</dark_gray> <color:#4FD6FF>IP:</color> <white>{value}</white>"
+  first-join: "<fcolor:2>✦</fcolor:2> <white>{player}</white> <white>впервые зашел на сервер.</white>"
+  usage: "<fcolor:3>Использование: /checkplayer <ник></fcolor:3>"
+  not-found: "<fcolor:3>Игрок <white>{player}</white> не найден в базе данных.</fcolor:3>"
+  lookup-error: "<fcolor:3>Не удалось получить данные игрока: <white>{error}</white></fcolor:3>"
+  header: "<fcolor>✦</fcolor> <fcolor>Профиль игрока</fcolor> <white>{player}</white>"
+  nickname: "<dark_gray>⤷</dark_gray> <fcolor>Ник:</fcolor> <white>{value}</white>"
+  uuid: "<dark_gray>⤷</dark_gray> <fcolor>UUID:</fcolor> <white>{value}</white>"
+  first-join-line: "<dark_gray>⤷</dark_gray> <fcolor>Первый заход:</fcolor> <white>{value}</white>"
+  last-join-line: "<dark_gray>⤷</dark_gray> <fcolor>Последний заход:</fcolor> <white>{value}</white>"
+  ip-line: "<dark_gray>⤷</dark_gray> <fcolor>IP:</fcolor> <white>{value}</white>"
+
+gamemode:
+  usage:
+    gm: |-
+      <fcolor>╭ Использование</fcolor>
+      <fcolor>╰</fcolor> <white>/gamemode <режим> [игрок]</white> <gray>или</gray> <white>/gm <режим> [игрок]</white>
+    shortcut: |-
+      <fcolor>╭ Использование</fcolor>
+      <fcolor>╰</fcolor> <white>/{command} [игрок]</white>
+  modes:
+    creative: "Креатив"
+    survival: "Выживание"
+    spectator: "Наблюдатель"
+    adventure: "Приключение"
+  messages:
+    self-change: "<fcolor:2>✦</fcolor:2> <white>Ваш режим игры изменён на</white> <fcolor>{mode}</fcolor>"
+    target-change: "<fcolor:2>✦</fcolor:2> <white>{actor} изменил ваш режим игры на</white> <fcolor>{mode}</fcolor>"
+    other-change: "<fcolor:2>✦</fcolor:2> <white>Вы изменили режим игры игроку</white> <fcolor>{target}</fcolor> <white>на</white> <fcolor>{mode}</fcolor>"
+    staff-notify-self: "<gray><i>{actor} изменил свой режим игры на {mode}</i></gray>"
+    staff-notify-other: "<gray><i>{actor} изменил режим игры игроку {target} на {mode}</i></gray>"
+
+punishments:
+  defaults:
+    reason: "Не указана"
+    permanent: "Навсегда"
+    instant: "Моментально"
+  formats:
+    date-format: "dd.MM.yyyy HH:mm:ss"
+    type-names:
+      ban: "бан"
+      kick: "кик"
+      mute: "мут"
+      warn: "варн"
+    type-names-plural:
+      ban: "баны"
+      mute: "муты"
+      warn: "варны"
+  commands:
+    ban:
+      usage: |-
+        <fcolor>╭ Использование</fcolor>
+        <fcolor>╰</fcolor> <white>/ban <игрок> [время] [причина]</white>
+    kick:
+      usage: |-
+        <fcolor>╭ Использование</fcolor>
+        <fcolor>╰</fcolor> <white>/kick <игрок> [причина]</white>
+    mute:
+      usage: |-
+        <fcolor>╭ Использование</fcolor>
+        <fcolor>╰</fcolor> <white>/mute <игрок> [время] [причина]</white>
+    warn:
+      usage: |-
+        <fcolor>╭ Использование</fcolor>
+        <fcolor>╰</fcolor> <white>/warn <игрок> [время] [причина]</white>
+    unban:
+      usage: |-
+        <fcolor>╭ Использование</fcolor>
+        <fcolor>╰</fcolor> <white>/unban <игрок|id></white>
+    unmute:
+      usage: |-
+        <fcolor>╭ Использование</fcolor>
+        <fcolor>╰</fcolor> <white>/unmute <игрок|id></white>
+    unwarn:
+      usage: |-
+        <fcolor>╭ Использование</fcolor>
+        <fcolor>╰</fcolor> <white>/unwarn <игрок|id></white>
+  messages:
+    target-not-found: "<fcolor:3>Игрок <white>{target}</white> не найден.</fcolor:3>"
+    target-must-be-online: "<fcolor:3>Игрок <white>{target}</white> должен быть в сети для кика.</fcolor:3>"
+    cannot-target-self: "<fcolor:3>Нельзя выдать наказание самому себе.</fcolor:3>"
+    reason-required: "<fcolor:3>Для наказания <white>{type}</white> требуется указать причину.</fcolor:3>"
+    already-active: "<fcolor:3>У игрока <white>{target}</white> уже есть активный <white>{type}</white>.</fcolor:3>"
+    punishment-not-found: "<fcolor:3>Активный <white>{type}</white> не найден.</fcolor:3>"
+    removed: "<fcolor:2>{type} успешно снят для <white>{query}</white>.</fcolor:2>"
+    lookup-error: "<fcolor:3>Ошибка при работе с наказаниями: <white>{error}</white></fcolor:3>"
+    mute-blocked: "<fcolor:3>Вы не можете писать в чат. Мут до: <white>{expires}</white> • Причина: <white>{reason}</white> • ID: <white>{id}</white></fcolor:3>"
+  broadcasts:
+    more: "<fcolor>[ПОДРОБНЕЕ]</fcolor>"
+    details: |-
+      <fcolor>Айди:</fcolor> <white>{id}</white>
+      <fcolor>Модератор:</fcolor> <white>{moderator}</white>
+      <fcolor>Время:</fcolor> <white>{expires}</white>
+      <fcolor>Причина:</fcolor> <white>{reason}</white>
+    ban:
+      format: "<fcolor>{moderator}</fcolor> <white>заблокировал игрока</white> <fcolor>{target}</fcolor>"
+    kick:
+      format: "<fcolor>{moderator}</fcolor> <white>кикнул игрока</white> <fcolor>{target}</fcolor>"
+    mute:
+      format: "<fcolor>{moderator}</fcolor> <white>выдал мут игроку</white> <fcolor>{target}</fcolor>"
+    warn:
+      format: "<fcolor>{moderator}</fcolor> <white>выдал предупреждение игроку</white> <fcolor>{target}</fcolor>"
+  lists:
+    header: "<fcolor>✦</fcolor> <fcolor>{type}</fcolor> <dark_gray>•</dark_gray> <white>страница {page}/{pages}</white> <dark_gray>•</dark_gray> <white>всего: {count}</white>"
+    entry: "<dark_gray>#{id}</dark_gray> <white>{target}</white> <dark_gray>•</dark_gray> <fcolor>{moderator}</fcolor> <dark_gray>•</dark_gray> <white>{expires}</white> <dark_gray>•</dark_gray> <gray>{reason}</gray>"
+    empty: "<fcolor:3>Активные {type} не найдены.</fcolor:3>"
+  screens:
+    ban: |-
+      <fcolor:3>Вы заблокированы на сервере.</fcolor:3>
+      <dark_gray>•</dark_gray> <fcolor>Айди:</fcolor> <white>{id}</white>
+      <dark_gray>•</dark_gray> <fcolor>Модератор:</fcolor> <white>{moderator}</white>
+      <dark_gray>•</dark_gray> <fcolor>До:</fcolor> <white>{expires}</white>
+      <dark_gray>•</dark_gray> <fcolor>Причина:</fcolor> <white>{reason}</white>
+    kick-screen: |-
+      <fcolor:3>Вы были кикнуты с сервера.</fcolor:3>
+      <dark_gray>•</dark_gray> <fcolor>Айди:</fcolor> <white>{id}</white>
+      <dark_gray>•</dark_gray> <fcolor>Модератор:</fcolor> <white>{moderator}</white>
+      <dark_gray>•</dark_gray> <fcolor>Причина:</fcolor> <white>{reason}</white>

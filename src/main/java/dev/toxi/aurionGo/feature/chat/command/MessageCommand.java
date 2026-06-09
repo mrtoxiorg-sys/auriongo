@@ -26,19 +26,19 @@ public final class MessageCommand implements CommandExecutor, TabCompleter {
         }
 
         if (!(sender instanceof Player player)) {
-            this.chatService.sendChatNotice(sender, "messages.player-only", Map.of(), Map.of());
+            this.chatService.sendChatNotice(sender, "errors.player-only", Map.of(), Map.of());
             return true;
         }
 
         if (args.length < 2) {
-            this.chatService.sendChatNotice(player, "commands.msg.usage", Map.of(), Map.of());
+            this.chatService.sendChatNotice(player, "chat.commands.msg.usage", Map.of(), Map.of());
             return true;
         }
 
         Player target = this.chatService.findOnlinePlayer(args[0]);
 
         if (target == null) {
-            this.chatService.sendChatNotice(player, "messages.player-not-found", Map.of("target", args[0]), Map.of());
+            this.chatService.sendChatNotice(player, "chat.messages.player-not-found", Map.of("target", args[0]), Map.of());
             return true;
         }
 
