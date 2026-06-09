@@ -1,0 +1,10 @@
+prefix: "<gray>[<gold>AurionGo</gold>]</gray> "
+
+general:
+  reload-success: "<green>Конфигурация успешно перезагружена."
+  module-disabled: "<red>Этот модуль отключен в конфигурации."
+
+errors:
+  no-permission: "<red>У тебя нет прав для этого действия."
+  player-only: "<red>Эту команду может использовать только игрок."
+  invalid-player: "<red>Не удалось найти указанного игрока."

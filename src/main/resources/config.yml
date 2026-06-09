@@ -1,0 +1,13 @@
+modules:
+  chat:
+    enabled: true
+  punishments:
+    enabled: true
+  warns:
+    enabled: true
+  integrations:
+    enabled: true
+
+storage:
+  type: YAML
+  autosave-interval-seconds: 300

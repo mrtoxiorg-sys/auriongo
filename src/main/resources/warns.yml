@@ -1,0 +1,9 @@
+warns:
+  enabled: true
+  max-active-warns: 3
+  expire-after-days: 30
+
+automatic-actions:
+  3:
+    type: MUTE
+    duration: "1d"

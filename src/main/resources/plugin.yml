@@ -7,3 +7,32 @@ api-version: '1.21.11'
 load: POSTWORLD
 
 authors: [ nora ]
+
+commands:
+  do:
+    description: Отправляет локальное RP-действие
+    usage: "/do <действие>"
+  msg:
+    description: Отправляет личное сообщение игроку
+    usage: "/msg <игрок> <сообщение>"
+    aliases: [ tell, m, w ]
+  r:
+    description: Отвечает последнему собеседнику
+    usage: "/r <сообщение>"
+
+permissions:
+  auriongo.chat.do:
+    description: Разрешает использовать /do
+    default: true
+  auriongo.chat.msg:
+    description: Разрешает использовать /msg
+    default: true
+  auriongo.chat.reply:
+    description: Разрешает использовать /r
+    default: true
+  auriongo.chat.color:
+    description: Разрешает использовать legacy-цвета в чате и чат-командах
+    default: op
+  auriongo.chat.minimessage:
+    description: Разрешает использовать теги MiniMessage в чате и чат-командах
+    default: op

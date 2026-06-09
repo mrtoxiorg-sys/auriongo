@@ -1,0 +1,47 @@
+formatting:
+  parser: MINI_MESSAGE
+  placeholderapi:
+    enabled: true
+  legacy-colors:
+    allow-ampersand: true
+    allow-section: false
+  input:
+    chat:
+      use-minimessage: true
+      use-legacy-colors: true
+    commands:
+      use-minimessage: true
+      use-legacy-colors: true
+    permissions:
+      legacy-colors: "auriongo.chat.color"
+      minimessage: "auriongo.chat.minimessage"
+
+formats:
+  global: "<gray>[{world}]</gray> <white>{player}</white><dark_gray>:</dark_gray> <message>"
+  do: "<gray>* <white>{player}</white> <gray>{message}"
+  private-message-sent: "<gray>[<green>кому: {target}</green>]</gray> <message>"
+  private-message-received: "<gray>[<green>от: {player}</green>]</gray> <message>"
+
+join-message:
+  enabled: true
+  format: "<green>+ <white>{player}</white>"
+
+quit-message:
+  enabled: true
+  format: "<red>- <white>{player}</white>"
+
+commands:
+  do:
+    radius: 100.0
+    usage: "<red>Использование: /do <действие>"
+  msg:
+    usage: "<red>Использование: /msg <игрок> <сообщение>"
+  reply:
+    usage: "<red>Использование: /r <сообщение>"
+
+messages:
+  player-only: "<red>Эту команду может использовать только игрок."
+  player-not-found: "<red>Игрок <white>{target}</white> сейчас не в сети."
+  cannot-message-self: "<red>Нельзя отправить личное сообщение самому себе."
+  reply-target-missing: "<red>Тебе еще никто не писал."
+  reply-target-offline: "<red>Последний собеседник уже вышел с сервера."

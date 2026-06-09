@@ -3,6 +3,10 @@ plugins {
     id("xyz.jpenilla.run-paper") version "3.0.2"
 }
 
+group = "dev.toxi"
+version = "0.1.0-SNAPSHOT"
+description = "Aurion moderation and chat plugin"
+
 repositories {
     mavenCentral()
     maven("https://repo.papermc.io/repository/maven-public/")

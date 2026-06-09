@@ -1,0 +1,11 @@
+bans:
+  enabled: true
+  broadcast: true
+
+kicks:
+  enabled: true
+
+mutes:
+  enabled: true
+  sync-with-voice-chat: true
+  block-chat: true
