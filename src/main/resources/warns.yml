@@ -1,3 +1,5 @@
+config-version: 1
+
 warns:
   enabled: true
   max-active-warns: 3

@@ -28,10 +28,11 @@ public final class ChatModule implements PluginModule {
     public void enable() {
         this.chatService = new ChatService(this.context);
         this.chatListener = new ChatListener(this.chatService);
+        MessageCommand messageCommand = new MessageCommand(this.chatService);
 
         this.context.plugin().getServer().getPluginManager().registerEvents(this.chatListener, this.context.plugin());
         registerCommand("do", new DoCommand(this.chatService), null);
-        registerCommand("msg", new MessageCommand(this.chatService), new MessageCommand(this.chatService));
+        registerCommand("msg", messageCommand, messageCommand);
         registerCommand("r", new ReplyCommand(this.chatService), null);
     }
 

@@ -7,6 +7,7 @@ import dev.toxi.aurionGo.shared.AurionContext;
 import io.papermc.paper.event.player.AsyncChatEvent;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
@@ -44,13 +45,37 @@ public final class ChatService {
     public void configurePublicChat(AsyncChatEvent event) {
         Player sender = event.getPlayer();
         String rawMessage = this.plainTextSerializer.serialize(event.message());
-        Component renderedMessage = parsePlayerInput(sender, rawMessage, true);
+        ChatRoute route = resolveChatRoute(rawMessage);
+        Component renderedMessage = parsePlayerInput(sender, route.content(), true);
         event.message(renderedMessage);
+
+        if (!route.global()) {
+            double radiusSquared = route.radius() * route.radius();
+            boolean foundOtherRecipients = event.viewers().stream()
+                    .filter(Player.class::isInstance)
+                    .map(Player.class::cast)
+                    .anyMatch(target -> !target.getUniqueId().equals(sender.getUniqueId()) && isLocalRecipient(sender, target, radiusSquared));
+
+            event.viewers().removeIf(audience -> audience instanceof Player target && !isLocalRecipient(sender, target, radiusSquared));
+
+            if (!foundOtherRecipients) {
+                sender.sendActionBar(parseTemplate(
+                        this.chatConfig.configuration().getString(
+                                "messages.local-no-recipients-actionbar",
+                                "<color:#FF4F4F>⌁ Рядом игроков не найдено.</color>"
+                        ),
+                        sender,
+                        Map.of(),
+                        Map.of()
+                ));
+            }
+        }
+
         event.renderer((Player source, Component sourceDisplayName, Component message, Audience viewer) ->
                 createChatLine(
                         source,
-                        "formats.global",
-                        Map.of("player", source.getName(), "world", source.getWorld().getName()),
+                        route.formatPath(),
+                        Map.of("player", source.getName()),
                         Map.of("message", message)
                 )
         );
@@ -83,7 +108,8 @@ public final class ChatService {
     }
 
     public void sendDo(Player sender, String rawInput) {
-        Component message = parsePlayerInput(sender, rawInput, false);
+        Component message = parsePlayerInput(sender, rawInput, false)
+                .decoration(TextDecoration.ITALIC, true);
         Component rendered = createChatLine(
                 sender,
                 "formats.do",
@@ -104,12 +130,19 @@ public final class ChatService {
     }
 
     public boolean sendPrivateMessage(Player sender, Player target, String rawInput) {
+        Component message = parsePlayerInput(sender, rawInput, false);
+
         if (sender.getUniqueId().equals(target.getUniqueId())) {
-            sendChatNotice(sender, "messages.cannot-message-self", Map.of(), Map.of());
-            return false;
+            Component note = createChatLine(
+                    sender,
+                    "formats.private-message-self",
+                    Map.of("player", sender.getName()),
+                    Map.of("message", message)
+            );
+            sender.sendMessage(note);
+            return true;
         }
 
-        Component message = parsePlayerInput(sender, rawInput, false);
         Component sent = createChatLine(
                 sender,
                 "formats.private-message-sent",
@@ -289,5 +322,41 @@ public final class ChatService {
         }
 
         return this.placeholderApiBridge.apply(player, input);
+    }
+
+    private ChatRoute resolveChatRoute(String rawMessage) {
+        FileConfiguration config = this.chatConfig.configuration();
+        boolean globalEnabled = config.getBoolean("channels.global.enabled", true);
+        String globalPrefix = config.getString("channels.global.prefix", "!");
+
+        if (globalEnabled && globalPrefix != null && !globalPrefix.isEmpty() && rawMessage.startsWith(globalPrefix)) {
+            String stripped = rawMessage.substring(globalPrefix.length()).stripLeading();
+
+            if (!stripped.isEmpty()) {
+                return new ChatRoute(true, stripped, "channels.global.format", 0.0D);
+            }
+        }
+
+        return new ChatRoute(
+                false,
+                rawMessage,
+                "channels.local.format",
+                config.getDouble("channels.local.radius", 150.0D)
+        );
+    }
+
+    private boolean isLocalRecipient(Player sender, Player target, double radiusSquared) {
+        if (sender.getUniqueId().equals(target.getUniqueId())) {
+            return true;
+        }
+
+        if (!sender.getWorld().equals(target.getWorld())) {
+            return false;
+        }
+
+        return sender.getLocation().distanceSquared(target.getLocation()) <= radiusSquared;
+    }
+
+    private record ChatRoute(boolean global, String content, String formatPath, double radius) {
     }
 }

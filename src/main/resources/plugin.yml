@@ -8,6 +8,11 @@ load: POSTWORLD
 
 authors: [ nora ]
 
+libraries:
+  - org.xerial:sqlite-jdbc:3.46.1.3
+  - org.mariadb.jdbc:mariadb-java-client:3.4.1
+  - com.mysql:mysql-connector-j:8.4.0
+
 commands:
   do:
     description: Отправляет локальное RP-действие
@@ -19,6 +24,9 @@ commands:
   r:
     description: Отвечает последнему собеседнику
     usage: "/r <сообщение>"
+  checkplayer:
+    description: Показывает информацию об игроке из базы данных
+    usage: "/checkplayer <ник>"
 
 permissions:
   auriongo.chat.do:
@@ -35,4 +43,7 @@ permissions:
     default: op
   auriongo.chat.minimessage:
     description: Разрешает использовать теги MiniMessage в чате и чат-командах
+    default: op
+  auriongo.player.check:
+    description: Разрешает использовать /checkplayer
     default: op

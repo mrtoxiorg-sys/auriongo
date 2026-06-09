@@ -1,10 +1,25 @@
-prefix: "<gray>[<gold>AurionGo</gold>]</gray> "
+config-version: 3
+
+prefix: "<dark_gray>[</dark_gray><color:#4FD6FF>AurionGo</color><dark_gray>]</dark_gray> "
 
 general:
-  reload-success: "<green>Конфигурация успешно перезагружена."
-  module-disabled: "<red>Этот модуль отключен в конфигурации."
+  reload-success: "<color:#4FFF88>Конфигурация успешно перезагружена."
+  module-disabled: "<color:#FF4F4F>Этот модуль отключен в конфигурации."
 
 errors:
-  no-permission: "<red>У тебя нет прав для этого действия."
-  player-only: "<red>Эту команду может использовать только игрок."
-  invalid-player: "<red>Не удалось найти указанного игрока."
+  no-permission: "<color:#FF4F4F>У тебя нет прав для этого действия."
+  player-only: "<color:#FF4F4F>Эту команду может использовать только игрок."
+  invalid-player: "<color:#FF4F4F>Не удалось найти указанного игрока."
+
+player-data:
+  date-format: "dd.MM.yyyy HH:mm:ss"
+  first-join: "<color:#4FFF88>✦</color> <white>{player}</white> <white>впервые зашел на сервер.</white>"
+  usage: "<color:#FF4F4F>Использование: /checkplayer <ник>"
+  not-found: "<color:#FF4F4F>Игрок <white>{player}</white> не найден в базе данных."
+  lookup-error: "<color:#FF4F4F>Не удалось получить данные игрока: <white>{error}</white>"
+  header: "<color:#4FD6FF>✦</color> <color:#4FD6FF>Профиль игрока</color> <white>{player}</white>"
+  nickname: "<dark_gray>⤷</dark_gray> <color:#4FD6FF>Ник:</color> <white>{value}</white>"
+  uuid: "<dark_gray>⤷</dark_gray> <color:#4FD6FF>UUID:</color> <white>{value}</white>"
+  first-join-line: "<dark_gray>⤷</dark_gray> <color:#4FD6FF>Первый заход:</color> <white>{value}</white>"
+  last-join-line: "<dark_gray>⤷</dark_gray> <color:#4FD6FF>Последний заход:</color> <white>{value}</white>"
+  ip-line: "<dark_gray>⤷</dark_gray> <color:#4FD6FF>IP:</color> <white>{value}</white>"

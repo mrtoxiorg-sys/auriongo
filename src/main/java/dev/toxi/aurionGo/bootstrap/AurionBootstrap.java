@@ -5,6 +5,7 @@ import dev.toxi.aurionGo.config.ConfigManager;
 import dev.toxi.aurionGo.config.StandardConfigs;
 import dev.toxi.aurionGo.feature.chat.ChatModule;
 import dev.toxi.aurionGo.feature.integration.IntegrationModule;
+import dev.toxi.aurionGo.feature.player.PlayerDataModule;
 import dev.toxi.aurionGo.feature.punishment.PunishmentModule;
 import dev.toxi.aurionGo.feature.warn.WarnModule;
 import dev.toxi.aurionGo.message.ConfigBackedMessageService;
@@ -12,10 +13,13 @@ import dev.toxi.aurionGo.message.MessageService;
 import dev.toxi.aurionGo.module.ModuleManager;
 import dev.toxi.aurionGo.shared.AurionContext;
 import dev.toxi.aurionGo.shared.ServiceRegistry;
+import dev.toxi.aurionGo.storage.DatabaseManager;
+import dev.toxi.aurionGo.storage.player.PlayerProfileRepository;
 
 public final class AurionBootstrap {
     private final AurionGo plugin;
     private ModuleManager moduleManager;
+    private DatabaseManager databaseManager;
 
     public AurionBootstrap(AurionGo plugin) {
         this.plugin = plugin;
@@ -36,9 +40,14 @@ public final class AurionBootstrap {
                 MessageService.class,
                 new ConfigBackedMessageService(configManager.require(StandardConfigs.MESSAGES))
         );
+        this.databaseManager = new DatabaseManager(configManager.require(StandardConfigs.CORE));
+        this.databaseManager.initialize();
+        serviceRegistry.register(DatabaseManager.class, this.databaseManager);
+        serviceRegistry.register(PlayerProfileRepository.class, new PlayerProfileRepository(this.databaseManager));
 
         AurionContext context = new AurionContext(this.plugin, configManager, serviceRegistry);
         this.moduleManager = new ModuleManager(context);
+        this.moduleManager.register(new PlayerDataModule(context));
         this.moduleManager.register(new ChatModule(context));
         this.moduleManager.register(new PunishmentModule(context));
         this.moduleManager.register(new WarnModule(context));
@@ -50,6 +59,11 @@ public final class AurionBootstrap {
         if (this.moduleManager != null) {
             this.moduleManager.disableAll();
             this.moduleManager = null;
+        }
+
+        if (this.databaseManager != null) {
+            this.databaseManager.close();
+            this.databaseManager = null;
         }
     }
 }

@@ -1,3 +1,5 @@
+config-version: 1
+
 bans:
   enabled: true
   broadcast: true

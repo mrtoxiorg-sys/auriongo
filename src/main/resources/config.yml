@@ -1,4 +1,8 @@
+config-version: 2
+
 modules:
+  player-data:
+    enabled: true
   chat:
     enabled: true
   punishments:
@@ -9,5 +13,20 @@ modules:
     enabled: true
 
 storage:
-  type: YAML
-  autosave-interval-seconds: 300
+  type: SQLITE
+  sqlite:
+    file: "database/auriongo.db"
+  mysql:
+    host: "127.0.0.1"
+    port: 3306
+    database: "auriongo"
+    username: "root"
+    password: "password"
+    parameters: "useSSL=false&serverTimezone=UTC&characterEncoding=utf8"
+  mariadb:
+    host: "127.0.0.1"
+    port: 3306
+    database: "auriongo"
+    username: "root"
+    password: "password"
+    parameters: "useSSL=false&useUnicode=true&characterEncoding=utf8"

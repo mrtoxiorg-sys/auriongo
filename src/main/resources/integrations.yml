@@ -1,3 +1,5 @@
+config-version: 1
+
 placeholderapi:
   hook: true
   fail-silently: true

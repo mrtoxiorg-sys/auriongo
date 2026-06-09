@@ -1,3 +1,5 @@
+config-version: 5
+
 formatting:
   parser: MINI_MESSAGE
   placeholderapi:
@@ -16,32 +18,42 @@ formatting:
       legacy-colors: "auriongo.chat.color"
       minimessage: "auriongo.chat.minimessage"
 
+channels:
+  local:
+    enabled: true
+    radius: 150.0
+    format: "<color:#4FD6FF>ʟ</color> <white>{player}</white> <dark_gray>»</dark_gray> <message>"
+  global:
+    enabled: true
+    prefix: "!"
+    format: "<color:#4FD6FF>ɢ</color> <white>{player}</white> <dark_gray>»</dark_gray> <message>"
+
 formats:
-  global: "<gray>[{world}]</gray> <white>{player}</white><dark_gray>:</dark_gray> <message>"
-  do: "<gray>* <white>{player}</white> <gray>{message}"
-  private-message-sent: "<gray>[<green>кому: {target}</green>]</gray> <message>"
-  private-message-received: "<gray>[<green>от: {player}</green>]</gray> <message>"
+  do: "<color:#4FD6FF>✧</color> <white>{player}</white> <dark_gray>»</dark_gray> <message>"
+  private-message-sent: "<color:#4FD6FF>✉</color> <dark_gray>➜</dark_gray> <white>{target}</white> <dark_gray>»</dark_gray> <message>"
+  private-message-received: "<color:#4FD6FF>✉</color> <dark_gray>⬳</dark_gray> <white>{player}</white> <dark_gray>»</dark_gray> <message>"
+  private-message-self: "<color:#4FD6FF>✎</color> <dark_gray>»</dark_gray> <message>"
 
 join-message:
   enabled: true
-  format: "<green>+ <white>{player}</white>"
+  format: "<color:#4FFF88>+ <color:#4FD6FF>{player}</color>"
 
 quit-message:
   enabled: true
-  format: "<red>- <white>{player}</white>"
+  format: "<color:#FF4F4F>- <color:#4FD6FF>{player}</color>"
 
 commands:
   do:
     radius: 100.0
-    usage: "<red>Использование: /do <действие>"
+    usage: "<color:#FF4F4F>Использование: /do <действие>"
   msg:
-    usage: "<red>Использование: /msg <игрок> <сообщение>"
+    usage: "<color:#FF4F4F>Использование: /msg <игрок> <сообщение>"
   reply:
-    usage: "<red>Использование: /r <сообщение>"
+    usage: "<color:#FF4F4F>Использование: /r <сообщение>"
 
 messages:
-  player-only: "<red>Эту команду может использовать только игрок."
-  player-not-found: "<red>Игрок <white>{target}</white> сейчас не в сети."
-  cannot-message-self: "<red>Нельзя отправить личное сообщение самому себе."
-  reply-target-missing: "<red>Тебе еще никто не писал."
-  reply-target-offline: "<red>Последний собеседник уже вышел с сервера."
+  player-only: "<color:#FF4F4F>Эту команду может использовать только игрок."
+  player-not-found: "<color:#FF4F4F>Игрок <white>{target}</white> сейчас не в сети."
+  reply-target-missing: "<color:#FF4F4F>Тебе еще никто не писал."
+  reply-target-offline: "<color:#FF4F4F>Последний собеседник уже вышел с сервера."
+  local-no-recipients-actionbar: "<color:#FF4F4F>Вас никто не услышал.</color>"
