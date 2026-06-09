@@ -14,6 +14,10 @@ libraries:
   - com.mysql:mysql-connector-j:8.4.0
 
 commands:
+  gamemode:
+    description: Меняет режим игры
+    usage: "/gamemode <режим> [игрок]"
+    aliases: [ gm ]
   do:
     description: Отправляет локальное RP-действие
     usage: "/do <действие>"
@@ -27,6 +31,48 @@ commands:
   checkplayer:
     description: Показывает информацию об игроке из базы данных
     usage: "/checkplayer <ник>"
+  gmc:
+    description: Переключает в креатив
+    usage: "/gmc [игрок]"
+  gms:
+    description: Переключает в выживание
+    usage: "/gms [игрок]"
+  gmsp:
+    description: Переключает в наблюдателя
+    usage: "/gmsp [игрок]"
+  gma:
+    description: Переключает в приключение
+    usage: "/gma [игрок]"
+  ban:
+    description: Блокирует игрока
+    usage: "/ban <ник> <причина> <время>"
+  banlist:
+    description: Показывает список активных банов
+    usage: "/banlist [страница]"
+  unban:
+    description: Снимает бан
+    usage: "/unban <ник|id>"
+  kick:
+    description: Кикает игрока
+    usage: "/kick <ник> <причина>"
+  mute:
+    description: Выдает мут игроку
+    usage: "/mute <ник> <причина> <время>"
+  mutelist:
+    description: Показывает список активных мутов
+    usage: "/mutelist [страница]"
+  unmute:
+    description: Снимает мут
+    usage: "/unmute <ник|id>"
+  warn:
+    description: Выдает предупреждение игроку
+    usage: "/warn <ник> <причина> <время>"
+  warnlist:
+    description: Показывает список активных варнов
+    usage: "/warnlist [страница]"
+  unwarn:
+    description: Снимает предупреждение
+    usage: "/unwarn <ник|id>"
 
 permissions:
   auriongo.chat.do:
@@ -46,4 +92,43 @@ permissions:
     default: op
   auriongo.player.check:
     description: Разрешает использовать /checkplayer
+    default: op
+  auriongo.gamemode:
+    description: Разрешает использовать команды смены режима игры
+    default: op
+  auriongo.gamemode.others:
+    description: Разрешает менять режим игры другим игрокам
+    default: op
+  auriongo.gamemode.notify:
+    description: Получать уведомления о смене режима игры
+    default: op
+  auriongo.punish.ban:
+    description: Разрешает использовать /ban
+    default: op
+  auriongo.punish.ban.list:
+    description: Разрешает использовать /banlist
+    default: op
+  auriongo.punish.ban.remove:
+    description: Разрешает использовать /unban
+    default: op
+  auriongo.punish.kick:
+    description: Разрешает использовать /kick
+    default: op
+  auriongo.punish.mute:
+    description: Разрешает использовать /mute
+    default: op
+  auriongo.punish.mute.list:
+    description: Разрешает использовать /mutelist
+    default: op
+  auriongo.punish.mute.remove:
+    description: Разрешает использовать /unmute
+    default: op
+  auriongo.punish.warn:
+    description: Разрешает использовать /warn
+    default: op
+  auriongo.punish.warn.list:
+    description: Разрешает использовать /warnlist
+    default: op
+  auriongo.punish.warn.remove:
+    description: Разрешает использовать /unwarn
     default: op

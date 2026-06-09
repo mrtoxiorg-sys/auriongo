@@ -1,8 +1,104 @@
-config-version: 1
+config-version: 4
+
+defaults:
+  reason: "Не указана"
+  permanent: "Навсегда"
+  instant: "Моментально"
+
+formats:
+  date-format: "dd.MM.yyyy HH:mm:ss"
+  type-names:
+    ban: "бан"
+    kick: "кик"
+    mute: "мут"
+    warn: "варн"
+  type-names-plural:
+    ban: "баны"
+    mute: "муты"
+    warn: "варны"
+
+commands:
+  ban:
+    usage: |-
+      <color:#4FD6FF>╭ Использование</color>
+      <color:#4FD6FF>╰</color> <white>/ban <игрок> [время] [причина]</white>
+  kick:
+    usage: |-
+      <color:#4FD6FF>╭ Использование</color>
+      <color:#4FD6FF>╰</color> <white>/kick <игрок> [причина]</white>
+  mute:
+    usage: |-
+      <color:#4FD6FF>╭ Использование</color>
+      <color:#4FD6FF>╰</color> <white>/mute <игрок> [время] [причина]</white>
+  warn:
+    usage: |-
+      <color:#4FD6FF>╭ Использование</color>
+      <color:#4FD6FF>╰</color> <white>/warn <игрок> [время] [причина]</white>
+  unban:
+    usage: |-
+      <color:#4FD6FF>╭ Использование</color>
+      <color:#4FD6FF>╰</color> <white>/unban <игрок|id></white>
+  unmute:
+    usage: |-
+      <color:#4FD6FF>╭ Использование</color>
+      <color:#4FD6FF>╰</color> <white>/unmute <игрок|id></white>
+  unwarn:
+    usage: |-
+      <color:#4FD6FF>╭ Использование</color>
+      <color:#4FD6FF>╰</color> <white>/unwarn <игрок|id></white>
+
+messages:
+  target-not-found: "<color:#FF4F4F>Игрок <white>{target}</white> не найден.</color>"
+  target-must-be-online: "<color:#FF4F4F>Игрок <white>{target}</white> должен быть в сети для кика.</color>"
+  cannot-target-self: "<color:#FF4F4F>Нельзя выдать наказание самому себе.</color>"
+  reason-required: "<color:#FF4F4F>Для наказания <white>{type}</white> требуется указать причину.</color>"
+  already-active: "<color:#FF4F4F>У игрока <white>{target}</white> уже есть активный <white>{type}</white>.</color>"
+  punishment-not-found: "<color:#FF4F4F>Активный <white>{type}</white> не найден.</color>"
+  removed: "<color:#4FFF88>{type} успешно снят для <white>{query}</white>.</color>"
+  lookup-error: "<color:#FF4F4F>Ошибка при работе с наказаниями: <white>{error}</white></color>"
+  mute-blocked: "<color:#FF4F4F>Вы не можете писать в чат. Мут до: <white>{expires}</white> • Причина: <white>{reason}</white> • ID: <white>{id}</white></color>"
+
+broadcasts:
+  more: "<color:#4FD6FF>[ПОДРОБНЕЕ]</color>"
+  details: |-
+    <color:#4FD6FF>Айди:</color> <white>{id}</white>
+    <color:#4FD6FF>Модератор:</color> <white>{moderator}</white>
+    <color:#4FD6FF>Время:</color> <white>{expires}</white>
+    <color:#4FD6FF>Причина:</color> <white>{reason}</white>
+  ban:
+    enabled: true
+    format: "<color:#4FD6FF>{moderator}</color> <white>заблокировал игрока</white> <color:#4FD6FF>{target}</color>"
+  kick:
+    enabled: true
+    format: "<color:#4FD6FF>{moderator}</color> <white>кикнул игрока</white> <color:#4FD6FF>{target}</color>"
+  mute:
+    enabled: true
+    format: "<color:#4FD6FF>{moderator}</color> <white>выдал мут игроку</white> <color:#4FD6FF>{target}</color>"
+  warn:
+    enabled: true
+    format: "<color:#4FD6FF>{moderator}</color> <white>выдал предупреждение игроку</white> <color:#4FD6FF>{target}</color>"
+
+lists:
+  page-size: 8
+  header: "<color:#4FD6FF>✦</color> <color:#4FD6FF>{type}</color> <dark_gray>•</dark_gray> <white>страница {page}/{pages}</white> <dark_gray>•</dark_gray> <white>всего: {count}</white>"
+  entry: "<dark_gray>#{id}</dark_gray> <white>{target}</white> <dark_gray>•</dark_gray> <color:#4FD6FF>{moderator}</color> <dark_gray>•</dark_gray> <white>{expires}</white> <dark_gray>•</dark_gray> <gray>{reason}</gray>"
+  empty: "<color:#FF4F4F>Активные {type} не найдены.</color>"
+
+screens:
+  ban: |-
+    <color:#FF4F4F>Вы заблокированы на сервере.</color>
+    <dark_gray>•</dark_gray> <color:#4FD6FF>Айди:</color> <white>{id}</white>
+    <dark_gray>•</dark_gray> <color:#4FD6FF>Модератор:</color> <white>{moderator}</white>
+    <dark_gray>•</dark_gray> <color:#4FD6FF>До:</color> <white>{expires}</white>
+    <dark_gray>•</dark_gray> <color:#4FD6FF>Причина:</color> <white>{reason}</white>
+  kick-screen: |-
+    <color:#FF4F4F>Вы были кикнуты с сервера.</color>
+    <dark_gray>•</dark_gray> <color:#4FD6FF>Айди:</color> <white>{id}</white>
+    <dark_gray>•</dark_gray> <color:#4FD6FF>Модератор:</color> <white>{moderator}</white>
+    <dark_gray>•</dark_gray> <color:#4FD6FF>Причина:</color> <white>{reason}</white>
 
 bans:
   enabled: true
-  broadcast: true
 
 kicks:
   enabled: true
@@ -11,3 +107,15 @@ mutes:
   enabled: true
   sync-with-voice-chat: true
   block-chat: true
+  blocked-commands:
+    - me
+    - minecraft:me
+    - msg
+    - tell
+    - m
+    - w
+    - r
+    - do
+
+warns:
+  enabled: true

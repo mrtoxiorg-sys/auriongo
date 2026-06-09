@@ -1,4 +1,4 @@
-config-version: 5
+config-version: 6
 
 formatting:
   parser: MINI_MESSAGE
@@ -29,10 +29,10 @@ channels:
     format: "<color:#4FD6FF>ɢ</color> <white>{player}</white> <dark_gray>»</dark_gray> <message>"
 
 formats:
-  do: "<color:#4FD6FF>✧</color> <white>{player}</white> <dark_gray>»</dark_gray> <message>"
+  do: "<white>{player}</white> <dark_gray>»</dark_gray> <message>"
   private-message-sent: "<color:#4FD6FF>✉</color> <dark_gray>➜</dark_gray> <white>{target}</white> <dark_gray>»</dark_gray> <message>"
   private-message-received: "<color:#4FD6FF>✉</color> <dark_gray>⬳</dark_gray> <white>{player}</white> <dark_gray>»</dark_gray> <message>"
-  private-message-self: "<color:#4FD6FF>✎</color> <dark_gray>»</dark_gray> <message>"
+  private-message-self: "<color:#4FD6FF>✎</color> <color:#4FD6FF>Заметки</color> <dark_gray>»</dark_gray> <message>"
 
 join-message:
   enabled: true

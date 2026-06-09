@@ -4,6 +4,7 @@ import dev.toxi.aurionGo.AurionGo;
 import dev.toxi.aurionGo.config.ConfigManager;
 import dev.toxi.aurionGo.config.StandardConfigs;
 import dev.toxi.aurionGo.feature.chat.ChatModule;
+import dev.toxi.aurionGo.feature.gamemode.GameModeModule;
 import dev.toxi.aurionGo.feature.integration.IntegrationModule;
 import dev.toxi.aurionGo.feature.player.PlayerDataModule;
 import dev.toxi.aurionGo.feature.punishment.PunishmentModule;
@@ -30,6 +31,7 @@ public final class AurionBootstrap {
         configManager.register(StandardConfigs.CORE);
         configManager.register(StandardConfigs.MESSAGES);
         configManager.register(StandardConfigs.CHAT);
+        configManager.register(StandardConfigs.GAMEMODES);
         configManager.register(StandardConfigs.PUNISHMENTS);
         configManager.register(StandardConfigs.WARNS);
         configManager.register(StandardConfigs.INTEGRATIONS);
@@ -49,6 +51,7 @@ public final class AurionBootstrap {
         this.moduleManager = new ModuleManager(context);
         this.moduleManager.register(new PlayerDataModule(context));
         this.moduleManager.register(new ChatModule(context));
+        this.moduleManager.register(new GameModeModule(context));
         this.moduleManager.register(new PunishmentModule(context));
         this.moduleManager.register(new WarnModule(context));
         this.moduleManager.register(new IntegrationModule(context));

@@ -4,6 +4,7 @@ import dev.toxi.aurionGo.config.ConfigFile;
 
 import java.io.File;
 import java.sql.Connection;
+import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -47,20 +48,12 @@ public final class DatabaseManager implements AutoCloseable {
     }
 
     private void createSchema() {
-        String sql = """
-                CREATE TABLE IF NOT EXISTS aurion_players (
-                    uuid VARCHAR(36) PRIMARY KEY,
-                    nickname VARCHAR(16) NOT NULL,
-                    ip_address VARCHAR(45) NOT NULL,
-                    first_join BIGINT NOT NULL,
-                    last_join BIGINT NOT NULL
-                )
-                """;
-
         try (Connection connection = getConnection(); Statement statement = connection.createStatement()) {
-            statement.execute(sql);
+            statement.execute(playerTableSql());
+            ensurePlayerColumns(connection, statement);
+            statement.execute(punishmentsTableSql());
         } catch (SQLException exception) {
-            throw new IllegalStateException("Не удалось создать таблицу aurion_players.", exception);
+            throw new IllegalStateException("Не удалось создать схему базы данных AurionGo.", exception);
         }
     }
 
@@ -98,5 +91,92 @@ public final class DatabaseManager implements AutoCloseable {
         String parameters = this.configFile.configuration().getString(key + ".parameters", "");
         String suffix = parameters.isBlank() ? "" : "?" + parameters;
         return "jdbc:" + driver + "://" + host + ":" + port + "/" + database + suffix;
+    }
+
+    private String playerTableSql() {
+        return """
+                CREATE TABLE IF NOT EXISTS aurion_players (
+                    uuid VARCHAR(36) PRIMARY KEY,
+                    nickname VARCHAR(16) NOT NULL,
+                    ip_address VARCHAR(45) NOT NULL,
+                    first_join BIGINT NOT NULL,
+                    last_join BIGINT NOT NULL,
+                    banned BOOLEAN NOT NULL DEFAULT FALSE,
+                    ban_expires_at BIGINT NULL,
+                    muted BOOLEAN NOT NULL DEFAULT FALSE,
+                    mute_expires_at BIGINT NULL,
+                    active_warns INTEGER NOT NULL DEFAULT 0
+                )
+                """;
+    }
+
+    private String punishmentsTableSql() {
+        return switch (this.type) {
+            case SQLITE -> """
+                    CREATE TABLE IF NOT EXISTS aurion_punishments (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        type VARCHAR(16) NOT NULL,
+                        target_uuid VARCHAR(36) NOT NULL,
+                        target_nickname VARCHAR(16) NOT NULL,
+                        moderator_uuid VARCHAR(36) NULL,
+                        moderator_name VARCHAR(16) NOT NULL,
+                        reason TEXT NOT NULL,
+                        created_at BIGINT NOT NULL,
+                        expires_at BIGINT NULL,
+                        active BOOLEAN NOT NULL,
+                        removed_at BIGINT NULL,
+                        removed_by_uuid VARCHAR(36) NULL,
+                        removed_by_name VARCHAR(16) NULL,
+                        removal_reason TEXT NULL
+                    )
+                    """;
+            case MYSQL, MARIADB -> """
+                    CREATE TABLE IF NOT EXISTS aurion_punishments (
+                        id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+                        type VARCHAR(16) NOT NULL,
+                        target_uuid VARCHAR(36) NOT NULL,
+                        target_nickname VARCHAR(16) NOT NULL,
+                        moderator_uuid VARCHAR(36) NULL,
+                        moderator_name VARCHAR(16) NOT NULL,
+                        reason TEXT NOT NULL,
+                        created_at BIGINT NOT NULL,
+                        expires_at BIGINT NULL,
+                        active BOOLEAN NOT NULL,
+                        removed_at BIGINT NULL,
+                        removed_by_uuid VARCHAR(36) NULL,
+                        removed_by_name VARCHAR(16) NULL,
+                        removal_reason TEXT NULL
+                    )
+                    """;
+        };
+    }
+
+    private void ensurePlayerColumns(Connection connection, Statement statement) throws SQLException {
+        ensureColumn(connection, statement, "aurion_players", "banned", "BOOLEAN NOT NULL DEFAULT FALSE");
+        ensureColumn(connection, statement, "aurion_players", "ban_expires_at", "BIGINT NULL");
+        ensureColumn(connection, statement, "aurion_players", "muted", "BOOLEAN NOT NULL DEFAULT FALSE");
+        ensureColumn(connection, statement, "aurion_players", "mute_expires_at", "BIGINT NULL");
+        ensureColumn(connection, statement, "aurion_players", "active_warns", "INTEGER NOT NULL DEFAULT 0");
+    }
+
+    private void ensureColumn(Connection connection, Statement statement, String tableName, String columnName, String definition) throws SQLException {
+        if (columnExists(connection, tableName, columnName)) {
+            return;
+        }
+
+        statement.execute("ALTER TABLE " + tableName + " ADD COLUMN " + columnName + " " + definition);
+    }
+
+    private boolean columnExists(Connection connection, String tableName, String columnName) throws SQLException {
+        DatabaseMetaData metadata = connection.getMetaData();
+        return hasColumn(metadata, tableName, columnName)
+                || hasColumn(metadata, tableName.toUpperCase(), columnName.toUpperCase())
+                || hasColumn(metadata, tableName.toLowerCase(), columnName.toLowerCase());
+    }
+
+    private boolean hasColumn(DatabaseMetaData metadata, String tableName, String columnName) throws SQLException {
+        try (var resultSet = metadata.getColumns(null, null, tableName, columnName)) {
+            return resultSet.next();
+        }
     }
 }

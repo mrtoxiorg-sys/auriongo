@@ -5,6 +5,8 @@ modules:
     enabled: true
   chat:
     enabled: true
+  gamemode:
+    enabled: true
   punishments:
     enabled: true
   warns:

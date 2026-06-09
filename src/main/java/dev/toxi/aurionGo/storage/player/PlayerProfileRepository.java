@@ -30,7 +30,7 @@ public final class PlayerProfileRepository {
 
     public Optional<PlayerProfileRecord> findByNickname(String nickname) throws SQLException {
         String sql = """
-                SELECT uuid, nickname, ip_address, first_join, last_join
+                SELECT uuid, nickname, ip_address, first_join, last_join, banned, ban_expires_at, muted, mute_expires_at, active_warns
                 FROM aurion_players
                 WHERE LOWER(nickname) = LOWER(?)
                 LIMIT 1
@@ -50,9 +50,73 @@ public final class PlayerProfileRepository {
                         resultSet.getString("nickname"),
                         resultSet.getString("ip_address"),
                         resultSet.getLong("first_join"),
-                        resultSet.getLong("last_join")
+                        resultSet.getLong("last_join"),
+                        resultSet.getBoolean("banned"),
+                        getNullableLong(resultSet, "ban_expires_at"),
+                        resultSet.getBoolean("muted"),
+                        getNullableLong(resultSet, "mute_expires_at"),
+                        resultSet.getInt("active_warns")
                 ));
             }
+        }
+    }
+
+    public void updateBanState(UUID uuid, boolean banned, Long expiresAt) throws SQLException {
+        String sql = """
+                UPDATE aurion_players
+                SET banned = ?, ban_expires_at = ?
+                WHERE uuid = ?
+                """;
+
+        try (Connection connection = this.databaseManager.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setBoolean(1, banned);
+
+            if (expiresAt == null) {
+                statement.setNull(2, java.sql.Types.BIGINT);
+            } else {
+                statement.setLong(2, expiresAt);
+            }
+
+            statement.setString(3, uuid.toString());
+            statement.executeUpdate();
+        }
+    }
+
+    public void updateMuteState(UUID uuid, boolean muted, Long expiresAt) throws SQLException {
+        String sql = """
+                UPDATE aurion_players
+                SET muted = ?, mute_expires_at = ?
+                WHERE uuid = ?
+                """;
+
+        try (Connection connection = this.databaseManager.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setBoolean(1, muted);
+
+            if (expiresAt == null) {
+                statement.setNull(2, java.sql.Types.BIGINT);
+            } else {
+                statement.setLong(2, expiresAt);
+            }
+
+            statement.setString(3, uuid.toString());
+            statement.executeUpdate();
+        }
+    }
+
+    public void updateWarnCount(UUID uuid, int activeWarns) throws SQLException {
+        String sql = """
+                UPDATE aurion_players
+                SET active_warns = ?
+                WHERE uuid = ?
+                """;
+
+        try (Connection connection = this.databaseManager.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setInt(1, activeWarns);
+            statement.setString(2, uuid.toString());
+            statement.executeUpdate();
         }
     }
 
@@ -75,8 +139,8 @@ public final class PlayerProfileRepository {
 
     private void insert(PlayerProfileSnapshot snapshot) throws SQLException {
         String sql = """
-                INSERT INTO aurion_players (uuid, nickname, ip_address, first_join, last_join)
-                VALUES (?, ?, ?, ?, ?)
+                INSERT INTO aurion_players (uuid, nickname, ip_address, first_join, last_join, banned, ban_expires_at, muted, mute_expires_at, active_warns)
+                VALUES (?, ?, ?, ?, ?, FALSE, NULL, FALSE, NULL, 0)
                 """;
 
         try (Connection connection = this.databaseManager.getConnection();
@@ -106,5 +170,10 @@ public final class PlayerProfileRepository {
             statement.setString(5, snapshot.uuid().toString());
             statement.executeUpdate();
         }
+    }
+
+    private Long getNullableLong(ResultSet resultSet, String columnName) throws SQLException {
+        long value = resultSet.getLong(columnName);
+        return resultSet.wasNull() ? null : value;
     }
 }

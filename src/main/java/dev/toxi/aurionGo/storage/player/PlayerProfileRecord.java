@@ -7,6 +7,11 @@ public record PlayerProfileRecord(
         String nickname,
         String ipAddress,
         long firstJoin,
-        long lastJoin
+        long lastJoin,
+        boolean banned,
+        Long banExpiresAt,
+        boolean muted,
+        Long muteExpiresAt,
+        int activeWarns
 ) {
 }
