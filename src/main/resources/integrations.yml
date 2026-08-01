@@ -1,0 +1,10 @@
+config-version: 1
+
+placeholderapi:
+  hook: true
+  fail-silently: true
+
+simple-voice-chat:
+  hook: true
+  mirror-mutes: true
+  fail-silently: true

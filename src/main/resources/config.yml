@@ -1,0 +1,47 @@
+config-version: 4
+
+modules:
+  afk:
+    enabled: true
+  player-data:
+    enabled: true
+  chat:
+    enabled: true
+  gamemode:
+    enabled: true
+  punishments:
+    enabled: true
+  warns:
+    enabled: true
+  integrations:
+    enabled: true
+  servermonitor:
+    enabled: true
+  world:
+    enabled: true
+
+theme:
+  fcolors:
+    "1": gradient:#ffffff:#ffffff
+    "2": gradient:#4FD6FF:#D7F4FA
+    "3": color:#A9A9A9
+    "4": color:#FFFAFA
+
+storage:
+  type: SQLITE
+  sqlite:
+    file: database/auriongo.db
+  mysql:
+    host: 127.0.0.1
+    port: 3306
+    database: auriongo
+    username: root
+    password: password
+    parameters: useSSL=false&serverTimezone=UTC&characterEncoding=utf8
+  mariadb:
+    host: 127.0.0.1
+    port: 3306
+    database: auriongo
+    username: root
+    password: password
+    parameters: useSSL=false&useUnicode=true&characterEncoding=utf8

@@ -1,0 +1,49 @@
+config-version: 7
+
+formatting:
+  parser: MINI_MESSAGE
+  placeholderapi:
+    enabled: true
+  legacy-colors:
+    allow-ampersand: true
+    allow-section: false
+  input:
+    chat:
+      use-minimessage: true
+      use-legacy-colors: true
+    commands:
+      use-minimessage: true
+      use-legacy-colors: true
+    permissions:
+      legacy-colors: "auriongo.chat.color"
+      minimessage: "auriongo.chat.minimessage"
+
+channels:
+  local:
+    enabled: true
+    radius: 150.0
+  global:
+    enabled: true
+    prefix: "!"
+
+join-message:
+  enabled: true
+
+quit-message:
+  enabled: true
+
+world-switch-message:
+  enabled: true
+
+commands:
+  do:
+    radius: 100.0
+
+private-message:
+  # Короткий звук получателю при входящем личном сообщении (/msg, /r).
+  sound:
+    enabled: true
+    # Ключ звука Minecraft. По умолчанию — колокольчик нотного блока.
+    type: "block.note_block.bell"
+    volume: 1.0
+    pitch: 1.0

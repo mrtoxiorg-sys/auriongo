@@ -1,0 +1,15 @@
+config-version: 1
+
+update:
+  sample-interval-ticks: 40
+  render-interval-ticks: 40
+
+scoreboard:
+  title: "<fcolor:2>✦</fcolor:2> <fcolor:1>Server Monitor</fcolor:1>"
+  lines:
+    - "<fcolor:1>TPS:</fcolor:1> <fcolor:2>{tps}</fcolor:2>"
+    - "<fcolor:1>MSPT:</fcolor:1> <fcolor:2>{mspt}</fcolor:2>"
+    - "<fcolor:1>RAM:</fcolor:1> <fcolor:2>{memory}%</fcolor:2>"
+    - "<fcolor:1>CPU:</fcolor:1> <fcolor:2>{cpu}%</fcolor:2>"
+    - "<fcolor:1>Online:</fcolor:1> <fcolor:2>{online}/{max_online}</fcolor:2>"
+    - "<fcolor:1>AVGP:</fcolor:1> <fcolor:2>{ping}ms</fcolor:2>"

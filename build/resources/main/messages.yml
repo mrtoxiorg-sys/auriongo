@@ -1,0 +1,292 @@
+prefix: "<fcolor:2>[ᴀᴜʀɪᴏɴ]</fcolor:2> "
+general:
+  reload-success: <fcolor:2>Конфигурация успешно перезагружена.</fcolor:2>
+  reload-failure: "<fcolor:3>Не удалось перезагрузить конфигурацию: <fcolor:4>{error}</fcolor:4></fcolor:3>"
+  reload-usage: <fcolor:3>Использование</fcolor:3> <fcolor:4>/{command} reload</fcolor:4>
+  module-disabled: <fcolor:3>Этот модуль отключен в конфигурации.</fcolor:3>
+errors:
+  no-permission: <fcolor:1>У тебя нет прав для этого действия.</fcolor:1>
+  player-only: <fcolor:1>Эту команду может использовать только игрок.</fcolor:1>
+  invalid-player: <fcolor:1>Не удалось найти указанного игрока.</fcolor:1>
+chat:
+  channels:
+    local:
+      format:
+        <fcolor:2>ʟ</fcolor:2> <white>{player}</white> <fcolor:2>»</fcolor:2>
+        <message>
+    global:
+      format:
+        <fcolor:2>ɢ</fcolor:2> <white>{player}</white> <fcolor:2>»</fcolor:2>
+        <message>
+  formats:
+    do: <white>{player}</white> <fcolor:2>»</fcolor:2> <message>
+    private-message-sent:
+      <fcolor:2>Я</fcolor:2> <fcolor:1>→</fcolor:1> <fcolor:2>{target}</fcolor:2>
+      <fcolor:1>»</fcolor:1> <message>
+    private-message-received:
+      <fcolor:2>{player}</fcolor:2> <fcolor:1>→</fcolor:1>
+      <fcolor:2>Я</fcolor:2> <fcolor:1>»</fcolor:1> <message>
+    private-message-self:
+      <fcolor:2>✎</fcolor:2> <fcolor:2>Заметки</fcolor:2> <fcolor:1>»</fcolor:1>
+      <message>
+    broadcast:
+      <gold>🔔</gold> <fcolor:2>Объявление:</fcolor:2> <message>
+    spy:
+      <fcolor:1>[spy]</fcolor:1> <fcolor:2>{sender}</fcolor:2>
+      <fcolor:1>→</fcolor:1> <fcolor:2>{target}</fcolor:2> <fcolor:1>»</fcolor:1>
+      <message>
+  join-message:
+    format: "%ctn_joinmessage%"
+  quit-message:
+    format: "%ctn_leavemessage%"
+  world-switch-message:
+    format:
+      <fcolor:2>✦</fcolor:2> <white>{player}</white> <fcolor:1>перешёл с</fcolor:1>
+      <fcolor:2>{from_server}</fcolor:2> <fcolor:1>на</fcolor:1> <fcolor:2>{to_server}</fcolor:2>
+  commands:
+    msg:
+      usage: <fcolor:1>Использование</fcolor:1> <fcolor:2>/msg <игрок> <сообщение></fcolor:2>
+    reply:
+      usage: <fcolor:1>Использование</fcolor:1> <fcolor:2>/r <сообщение></fcolor:2>
+    broadcast:
+      usage: <fcolor:1>Использование</fcolor:1> <fcolor:2>/broadcast <сообщение></fcolor:2>
+  messages:
+    player-not-found: <fcolor:1>Игрок <fcolor:2>{target}</fcolor:2> сейчас не в сети.</fcolor:1>
+    reply-target-missing: <fcolor:1>Тебе еще никто не писал.</fcolor:1>
+    reply-target-offline: <fcolor:1>Последний собеседник уже вышел с сервера.</fcolor:1>
+    local-no-recipients-actionbar: <fcolor:1>Вас никто не услышал.</fcolor:1>
+    player-hover-write: <fcolor:2>Написать {player}</fcolor:2>
+    spy-enabled: <fcolor:2>Просмотр личных сообщений включен.</fcolor:2>
+    spy-disabled: <fcolor:1>Просмотр личных сообщений выключен.</fcolor:1>
+afk:
+  now-afk: <fcolor:2>{player} отошёл.</fcolor:2>
+  return: <fcolor:2>{player} вернулся.</fcolor:2>
+  self-enabled: <fcolor:2>Вы перешли в режим АФК.</fcolor:2>
+  self-auto: <fcolor:2>Вы перешли в режим АФК из-за бездействия.</fcolor:2>
+  self-disabled: <fcolor:2>Вы вышли из режима АФК.</fcolor:2>
+player-data:
+  date-format: dd.MM.yyyy HH:mm:ss
+  first-join:
+    <fcolor:2>✦</fcolor:2> <white>{player}</white> <fcolor:1>впервые зашел
+    на сервер.</fcolor:1>
+  usage: <fcolor:1>Использование</fcolor:1> <fcolor:2>/checkplayer <ник></fcolor:2>
+  ip-usage: <fcolor:1>Использование</fcolor:1> <fcolor:2>/checkips <ip></fcolor:2>
+  hide-usage: <fcolor:1>Использование</fcolor:1> <fcolor:2>/{command} <joinleavemsg|afkmsg></fcolor:2>
+  hide-enabled: <fcolor:2>Скрытие <fcolor:1>{type}</fcolor:1> включено.</fcolor:2>
+  hide-disabled: <fcolor:2>Скрытие <fcolor:1>{type}</fcolor:1> выключено.</fcolor:2>
+  reveal-nickname: <fcolor:2>{player}</fcolor:2>
+  not-found: <fcolor:1>Игрок <fcolor:2>{player}</fcolor:2> не найден в базе данных.</fcolor:1>
+  lookup-error: "<fcolor:1>Не удалось получить данные игрока: <fcolor:2>{error}</fcolor:2></fcolor:1>"
+  header: <fcolor:2>✦</fcolor:2> <fcolor:1>Профиль игрока</fcolor:1> <fcolor:2>{player}</fcolor:2>
+  ip-header: "<fcolor:2>✦</fcolor:2> <fcolor:1>Найдено</fcolor:1> <fcolor:2>{count}</fcolor:2> <fcolor:1>игрок(ов) с IP</fcolor:1> <fcolor:2>{ip}</fcolor:2>"
+  ip-entry: "<fcolor:1>⤷</fcolor:1> <fcolor:2>{player}</fcolor:2> <fcolor:1>(UUID: {uuid}, последний заход: {lastJoin})</fcolor:1>"
+  ip-entry-name: "<fcolor:1>⤷</fcolor:1> <fcolor:2>{player}</fcolor:2>"
+  ip-entry-uuid: "<fcolor:1>(UUID: {uuid})</fcolor:1>"
+  ip-entry-lastjoin: "<fcolor:1>последний заход: {lastJoin}</fcolor:1>"
+  ip-not-found: <fcolor:1>Игроки с IP <fcolor:2>{ip}</fcolor:2> не найдены в базе данных.</fcolor:1>
+  ip-lookup-error: "<fcolor:1>Не удалось выполнить поиск по IP: <fcolor:2>{error}</fcolor:2></fcolor:1>"
+  copy-hover: "Нажмите, чтобы скопировать"
+  nickname: <fcolor:1>⤷ Ник:</fcolor:1> <fcolor:2>{value}</fcolor:2>
+  uuid: <fcolor:1>⤷ UUID:</fcolor:1> <fcolor:2>{value}</fcolor:2>
+  first-join-line: <fcolor:1>⤷ Первый заход:</fcolor:1> <fcolor:2>{value}</fcolor:2>
+  last-join-line: <fcolor:1>⤷ Последний заход:</fcolor:1> <fcolor:2>{value}</fcolor:2>
+  ip-line: <fcolor:1>⤷ IP:</fcolor:1> <fcolor:2>{value}</fcolor:2>
+  punishment-stats-header: <fcolor:1>✦ Наказания:</fcolor:1>
+  punishment-stat: "<fcolor:1>⤷</fcolor:1> <fcolor:2>{type}</fcolor:2> <fcolor:1>активные: {active}, всего: {total}</fcolor:1>"
+  punishment-stat-past: "<fcolor:1>⤷</fcolor:1> <fcolor:2>{type}</fcolor:2> <fcolor:1>всего: {total}</fcolor:1>"
+server-monitor:
+  messages:
+    enabled: <fcolor:1>Мониторинг сервера включен.</fcolor:1>
+    disabled: <fcolor:1>Мониторинг сервера выключен.</fcolor:1>
+world:
+  invalid-config: <fcolor:1>Конфиг переключения миров настроен некорректно.</fcolor:1>
+  lookup-pending: <fcolor:1>Подожди, предыдущий запрос на переключение еще обрабатывается.</fcolor:1>
+  checking: <fcolor:2>Проверяю доступный сервер для переключения...</fcolor:2>
+  connecting: <fcolor:2>Подключаю к серверу <fcolor:1>{server}</fcolor:1>...</fcolor:2>
+  cooldown: <fcolor:1>Повторно использовать /world можно через <fcolor:2>{seconds}</fcolor:2> сек.</fcolor:1>
+  combat-block: <fcolor:1>Нельзя переключить мир во время боя. Подожди <fcolor:2>{seconds}</fcolor:2> сек.</fcolor:1>
+  unsupported-server: <fcolor:1>Текущий сервер <fcolor:2>{server}</fcolor:2> не участвует в переключении.</fcolor:1>
+gamemode:
+  usage:
+    gm: |-
+      <fcolor:2>╭ Использование</fcolor:2>
+      <fcolor:2>╰</fcolor:2> <fcolor:2>/gamemode <режим> [игрок]</fcolor:2> <fcolor:1>или</fcolor:1> <fcolor:2>/gm <режим> [игрок]</fcolor:2>
+    shortcut: |-
+      <fcolor:2>╭ Использование</fcolor:2>
+      <fcolor:2>╰</fcolor:2> <fcolor:2>/{command} [игрок]</fcolor:2>
+  modes:
+    creative: Креатив
+    survival: Выживание
+    spectator: Наблюдатель
+    adventure: Приключение
+  messages:
+    self-change:
+      <fcolor:2>✦</fcolor:2> <fcolor:1>Ваш режим игры изменён на</fcolor:1>
+      <fcolor:2>{mode}</fcolor:2>
+    target-change:
+      <fcolor:2>✦</fcolor:2> <fcolor:2>{actor}</fcolor:2> <fcolor:1>изменил
+      ваш режим игры на</fcolor:1> <fcolor:2>{mode}</fcolor:2>
+    other-change:
+      <fcolor:2>✦</fcolor:2> <fcolor:1>Вы изменили режим игры игроку</fcolor:1>
+      <fcolor:2>{target}</fcolor:2> <fcolor:1>на</fcolor:1> <fcolor:2>{mode}</fcolor:2>
+    staff-notify-self: <fcolor:1><i>{actor} изменил свой режим игры на {mode}</i></fcolor:1>
+    staff-notify-other:
+      <fcolor:1><i>{actor} изменил режим игры игроку {target} на
+      {mode}</i></fcolor:1>
+punishments:
+  defaults:
+    reason: Не указана
+    permanent: Навсегда
+    instant: Моментально
+  formats:
+    date-format: dd.MM.yyyy HH:mm:ss
+    type-names:
+      ban: бан
+      kick: кик
+      mute: мут
+      warn: варн
+    type-names-plural:
+      ban: баны
+      mute: муты
+      warn: варны
+  commands:
+    ban:
+      usage: |-
+        <fcolor:2>╭ Использование</fcolor:2>
+        <fcolor:2>╰</fcolor:2> <fcolor:2>/ban <игрок> [время] [причина]</fcolor:2>
+    kick:
+      usage: |-
+        <fcolor:2>╭ Использование</fcolor:2>
+        <fcolor:2>╰</fcolor:2> <fcolor:2>/kick <игрок> [причина]</fcolor:2>
+    mute:
+      usage: |-
+        <fcolor:2>╭ Использование</fcolor:2>
+        <fcolor:2>╰</fcolor:2> <fcolor:2>/mute <игрок> [время] [причина]</fcolor:2>
+    warn:
+      usage: |-
+        <fcolor:2>╭ Использование</fcolor:2>
+        <fcolor:2>╰</fcolor:2> <fcolor:2>/warn <игрок> [время] [причина]</fcolor:2>
+    unban:
+      usage: |-
+        <fcolor:2>╭ Использование</fcolor:2>
+        <fcolor:2>╰</fcolor:2> <fcolor:2>/unban [игрок/ID]</fcolor:2>
+    unmute:
+      usage: |-
+        <fcolor:2>╭ Использование</fcolor:2>
+        <fcolor:2>╰</fcolor:2> <fcolor:2>/unmute [игрок/ID]</fcolor:2>
+    unwarn:
+      usage: |-
+        <fcolor:2>╭ Использование</fcolor:2>
+        <fcolor:2>╰</fcolor:2> <fcolor:2>/unwarn [игрок/ID]</fcolor:2>
+    bansearch:
+      usage: |-
+        <fcolor:2>╭ Использование</fcolor:2>
+        <fcolor:2>╰</fcolor:2> <fcolor:2>/banlistsearch <ник/часть ника> [страница]</fcolor:2>
+    warnsearch:
+      usage: |-
+        <fcolor:2>╭ Использование</fcolor:2>
+        <fcolor:2>╰</fcolor:2> <fcolor:2>/warnlistsearch <ник/часть ника> [страница]</fcolor:2>
+  messages:
+    target-not-found: <fcolor:3>Игрок <fcolor:4>{target}</fcolor:4> не найден.</fcolor:3>
+    target-must-be-online:
+      <fcolor:3>Игрок <fcolor:4>{target}</fcolor:4> должен быть
+      в сети для кика.</fcolor:3>
+    cannot-target-self: <fcolor:3>Нельзя выдать наказание самому себе.</fcolor:3>
+    reason-required:
+      <fcolor:3>Для наказания <fcolor:4>{type}</fcolor:4> требуется
+      указать причину.</fcolor:3>
+    already-active:
+      <fcolor:3>У игрока <fcolor:4>{target}</fcolor:4> уже есть активный
+      <fcolor:4>{type}</fcolor:4>.</fcolor:3>
+    punishment-not-found: <fcolor:3>Активный <fcolor:4>{type}</fcolor:4> не найден.</fcolor:3>
+    removed: <fcolor:2>{type} успешно снят для <fcolor:4>{query}</fcolor:4>.</fcolor:2>
+    applied: <fcolor:2>Вы выдали наказание <fcolor:4>{type}</fcolor:4> игроку <fcolor:4>{target}</fcolor:4>.</fcolor:2>
+    target-notified:
+      "<fcolor:3>Вы получили наказание <fcolor:4>{type}</fcolor:4>
+      от <fcolor:4>{moderator}</fcolor:4>. Причина: <fcolor:4>{reason}</fcolor:4>.
+      Срок: <fcolor:4>{expires}</fcolor:4>.</fcolor:3>"
+    lookup-error: "<fcolor:3>Ошибка при работе с наказаниями: <fcolor:4>{error}</fcolor:4></fcolor:3>"
+    login-ban-attempt: <fcolor:3>Заблокированный игрок <fcolor:4>{player}</fcolor:4> попытался подключиться.</fcolor:3>
+    mute-blocked:
+      "<fcolor:3>Вы не можете писать в чат. Осталось: <fcolor:4>{expires}</fcolor:4>
+      • Причина: <fcolor:4>{reason}</fcolor:4> • ID: <fcolor:4>{id}</fcolor:4></fcolor:3>"
+  broadcasts:
+    more: <fcolor:2>[ПОДРОБНЕЕ]</fcolor:2>
+    details: |-
+      <fcolor>Айди:</fcolor> <fcolor:4>{id}</fcolor:4>
+      <fcolor>Модератор:</fcolor> <fcolor:4>{moderator}</fcolor:4>
+      <fcolor>Время:</fcolor> <fcolor:4>{expires}</fcolor:4>
+      <fcolor>Причина:</fcolor> <fcolor:4>{reason}</fcolor:4>
+    details-kick: |-
+      <fcolor>Айди:</fcolor> <fcolor:4>{id}</fcolor:4>
+      <fcolor>Модератор:</fcolor> <fcolor:4>{moderator}</fcolor:4>
+      <fcolor>Причина:</fcolor> <fcolor:4>{reason}</fcolor:4>
+    ban:
+      format:
+        <fcolor:2>{moderator}</fcolor:2> <fcolor:1>заблокировал игрока</fcolor:1>
+        <fcolor:2>{target}</fcolor:2>
+    kick:
+      format:
+        <fcolor:2>{moderator}</fcolor:2> <fcolor:1>кикнул игрока</fcolor:1>
+        <fcolor:2>{target}</fcolor:2>
+    mute:
+      format:
+        <fcolor:2>{moderator}</fcolor:2> <fcolor:1>выдал мут игроку</fcolor:1>
+        <fcolor:2>{target}</fcolor:2>
+    warn:
+      format:
+        <fcolor:2>{moderator}</fcolor:2> <fcolor:1>выдал предупреждение игроку</fcolor:1>
+        <fcolor:2>{target}</fcolor:2>
+    unban:
+      format:
+        <fcolor:2>{moderator}</fcolor:2> <fcolor:1>снял бан с игрока</fcolor:1>
+        <fcolor:2>{target}</fcolor:2>
+    unmute:
+      format:
+        <fcolor:2>{moderator}</fcolor:2> <fcolor:1>снял мут с игрока</fcolor:1>
+        <fcolor:2>{target}</fcolor:2>
+    unwarn:
+      format:
+        <fcolor:2>{moderator}</fcolor:2> <fcolor:1>снял предупреждение с игрока</fcolor:1>
+        <fcolor:2>{target}</fcolor:2>
+  lists:
+    header:
+      "<fcolor:2>✦</fcolor:2> <fcolor:2>{type}</fcolor:2> <fcolor:1>•</fcolor:1>
+      <fcolor:1>страница {page}/{pages}</fcolor:1> <fcolor:1>•</fcolor:1> <fcolor:1>всего:
+      {count}</fcolor:1>"
+    search-header:
+      "<fcolor:2>✦</fcolor:2> <fcolor:2>{query}</fcolor:2> <fcolor:1>•</fcolor:1>
+      <fcolor:1>{type}</fcolor:1> <fcolor:1>•</fcolor:1> <fcolor:1>страница {page}/{pages}</fcolor:1> <fcolor:1>•</fcolor:1> <fcolor:1>всего:
+      {count}</fcolor:1>"
+    entry-target: <fcolor:2>{target}</fcolor:2>
+    entry-more: <fcolor:2>[ПОДРОБНЕЕ]</fcolor:2>
+    entry-hover: |-
+      <fcolor:1>Нарушитель:</fcolor:1> <fcolor:2>{target}</fcolor:2>
+      <fcolor:1>Тип:</fcolor:1> <fcolor:2>{type}</fcolor:2>
+      <fcolor:1>Айди:</fcolor:1> <fcolor:2>{id}</fcolor:2>
+      <fcolor:1>Модератор:</fcolor:1> <fcolor:2>{moderator}</fcolor:2>
+      <fcolor:1>Осталось:</fcolor:1> <fcolor:2>{expires}</fcolor:2>
+      <fcolor:1>Причина:</fcolor:1> <fcolor:2>{reason}</fcolor:2>
+    navigation:
+      previous-active: <fcolor:2>←</fcolor:2>
+      previous-inactive: <fcolor:1>←</fcolor:1>
+      previous-hover: <fcolor:1>Открыть страницу {page}</fcolor:1>
+      current: <fcolor:1>{page}/{pages}</fcolor:1>
+      next-active: <fcolor:2>→</fcolor:2>
+      next-inactive: <fcolor:1>→</fcolor:1>
+      next-hover: <fcolor:1>Открыть страницу {page}</fcolor:1>
+    empty: <fcolor:1>Активные {type} не найдены.</fcolor:1>
+    search-empty: <fcolor:1>Не найдено активных {type} для <fcolor:2>{query}</fcolor:2>.</fcolor:1>
+  screens:
+    ban: |-
+      <fcolor:3>Вы заблокированы на сервере.</fcolor:3>
+      <fcolor:3>•</fcolor:3> <fcolor>Айди:</fcolor> <fcolor:4>{id}</fcolor:4>
+      <fcolor:3>•</fcolor:3> <fcolor>Модератор:</fcolor> <fcolor:4>{moderator}</fcolor:4>
+      <fcolor:3>•</fcolor:3> <fcolor>Осталось:</fcolor> <fcolor:4>{expires}</fcolor:4>
+      <fcolor:3>•</fcolor:3> <fcolor>Причина:</fcolor> <fcolor:4>{reason}</fcolor:4>
+    kick-screen: |-
+      <fcolor:3>Вы были кикнуты с сервера.</fcolor:3>
+      <fcolor:3>•</fcolor:3> <fcolor>Айди:</fcolor> <fcolor:4>{id}</fcolor:4>
+      <fcolor:3>•</fcolor:3> <fcolor>Модератор:</fcolor> <fcolor:4>{moderator}</fcolor:4>
+      <fcolor:3>•</fcolor:3> <fcolor>Причина:</fcolor> <fcolor:4>{reason}</fcolor:4>
+config-version: 4

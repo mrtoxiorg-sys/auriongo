@@ -1,0 +1,190 @@
+name: AurionGo
+description: Aurion moderation and chat plugin
+version: "0.1.0-SNAPSHOT"
+
+main: dev.toxi.aurionGo.AurionGo
+api-version: "1.21.11"
+load: POSTWORLD
+
+authors: [nora]
+softdepend: [PlaceholderAPI, InteractiveChat, DiscordSRV, TAB]
+
+libraries:
+  - org.xerial:sqlite-jdbc:3.46.1.3
+  - org.mariadb.jdbc:mariadb-java-client:3.4.1
+  - com.mysql:mysql-connector-j:8.4.0
+
+commands:
+  auriongo:
+    description: Управление AurionGo
+    usage: "/auriongo reload"
+  gamemode:
+    description: Меняет режим игры
+    usage: "/gamemode <режим> [игрок]"
+    aliases: [gm]
+  msg:
+    description: Отправляет личное сообщение игроку
+    usage: "/msg <игрок> <сообщение>"
+    aliases: [tell, m, w]
+  r:
+    description: Отвечает последнему собеседнику
+    usage: "/r <сообщение>"
+  broadcast:
+    description: Отправляет объявление на весь сервер
+    usage: "/broadcast <сообщение>"
+    aliases: [ac]
+  spy:
+    description: Переключает просмотр чужих личных сообщений
+    usage: "/spy"
+  afk:
+    description: Переключает режим АФК
+    usage: "/afk"
+  checkplayer:
+    description: Показывает информацию об игроке из базы данных
+    usage: "/checkplayer <ник>"
+  checkips:
+    description: Показывает игроков с указанным IP из базы данных
+    usage: "/checkips <ip>"
+  hide:
+    description: Переключает скрытие системных сообщений
+    usage: "/hide <joinleavemsg|afkmsg>"
+  togglenametag:
+    description: Переключает отображение ника над головой
+    usage: "/togglenametag"
+  gmc:
+    description: Переключает в креатив
+    usage: "/gmc [игрок]"
+  gms:
+    description: Переключает в выживание
+    usage: "/gms [игрок]"
+  gmsp:
+    description: Переключает в наблюдателя
+    usage: "/gmsp [игрок]"
+  gma:
+    description: Переключает в приключение
+    usage: "/gma [игрок]"
+  ban:
+    description: Блокирует игрока
+    usage: "/ban <ник> <причина> <время>"
+  banlist:
+    description: Показывает список активных банов
+    usage: "/banlist [страница]"
+  unban:
+    description: Снимает бан
+    usage: "/unban <ник|id>"
+  kick:
+    description: Кикает игрока
+    usage: "/kick <ник> <причина>"
+  mute:
+    description: Выдает мут игроку
+    usage: "/mute <ник> <причина> <время>"
+  mutelist:
+    description: Показывает список активных мутов
+    usage: "/mutelist [страница]"
+  unmute:
+    description: Снимает мут
+    usage: "/unmute <ник|id>"
+  warn:
+    description: Выдает предупреждение игроку
+    usage: "/warn <ник> <причина> <время>"
+  warnlist:
+    description: Показывает список активных варнов
+    usage: "/warnlist [страница]"
+  unwarn:
+    description: Снимает предупреждение
+    usage: "/unwarn <ник|id>"
+  banlistsearch:
+    description: Ищет баны по нику
+    usage: "/banlistsearch <ник> [страница]"
+  warnlistsearch:
+    description: Ищет варны по нику
+    usage: "/warnlistsearch <ник> [страница]"
+  servermonitor:
+    description: Показывает мониторинг сервера в scoreboard
+    usage: "/servermonitor"
+  world:
+    description: Переключает между vanilla и mf
+    usage: "/world"
+
+permissions:
+  auriongo.command.misc.reload:
+    description: Разрешает перезагружать конфигурацию AurionGo
+    default: op
+  auriongo.command.chat.msg:
+    description: Разрешает использовать /msg
+    default: true
+  auriongo.command.chat.reply:
+    description: Разрешает использовать /r
+    default: true
+  auriongo.command.chat.broadcast:
+    description: Разрешает использовать /broadcast
+    default: op
+  auriongo.command.chat.spy:
+    description: Разрешает использовать /spy и видеть чужие личные сообщения
+    default: op
+  auriongo.command.misc.afk:
+    description: Разрешает использовать /afk
+    default: true
+  auriongo.command.chat.color:
+    description: Разрешает использовать legacy-цвета в чате и чат-командах
+    default: op
+  auriongo.command.chat.minimessage:
+    description: Разрешает использовать теги MiniMessage в чате и чат-командах
+    default: op
+  auriongo.command.misc.checkplayer:
+    description: Разрешает использовать /checkplayer
+    default: op
+  auriongo.command.misc.checkips:
+    description: Разрешает использовать /checkips
+    default: op
+  auriongo.command.misc.hide:
+    description: Разрешает использовать /hide
+    default: op
+  auriongo.command.misc.togglenametag:
+    description: Разрешает использовать /togglenametag
+    default: op
+  auriongo.bypass.nametag:
+    description: Разрешает видеть скрытые nametag других игроков
+    default: op
+  auriongo.command.misc.servermonitor:
+    description: Разрешает использовать /servermonitor
+    default: op
+  auriongo.command.misc.world:
+    description: Разрешает использовать /world
+    default: true
+  auriongo.command.misc.gamemode:
+    description: Разрешает использовать команды смены режима игры (себе и другим)
+    default: op
+  auriongo.command.misc.gamemode.notify:
+    description: Получать уведомления о смене режима игры
+    default: op
+  auriongo.command.punishment.ban:
+    description: Разрешает использовать /ban
+    default: op
+  auriongo.command.punishment.banlist:
+    description: Разрешает использовать /banlist
+    default: op
+  auriongo.command.punishment.unban:
+    description: Разрешает использовать /unban
+    default: op
+  auriongo.command.punishment.kick:
+    description: Разрешает использовать /kick
+    default: op
+  auriongo.command.punishment.mute:
+    description: Разрешает использовать /mute
+    default: op
+  auriongo.command.punishment.mutelist:
+    description: Разрешает использовать /mutelist
+    default: op
+  auriongo.command.punishment.unmute:
+    description: Разрешает использовать /unmute
+    default: op
+  auriongo.command.punishment.warn:
+    description: Разрешает использовать /warn
+    default: op
+  auriongo.command.punishment.warnlist:
+    description: Разрешает использовать /warnlist
+    default: op
+  auriongo.command.punishment.unwarn:
+    description: Разрешает использовать /unwarn
+    default: op
