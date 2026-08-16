@@ -105,6 +105,12 @@ commands:
   world:
     description: Переключает между vanilla и mf
     usage: "/world"
+  god:
+    description: Переключает режим бессмертия
+    usage: "/god [игрок]"
+  fly:
+    description: Переключает режим полёта
+    usage: "/fly [игрок]"
 
 permissions:
   auriongo.command.misc.reload:
@@ -152,6 +158,15 @@ permissions:
   auriongo.command.misc.world:
     description: Разрешает использовать /world
     default: true
+  auriongo.command.misc.god:
+    description: Разрешает использовать /god
+    default: op
+  auriongo.command.misc.fly:
+    description: Разрешает использовать /fly
+    default: op
+  auriongo.command.misc.playermode.notify:
+    description: Получать уведомления о смене режимов god/fly
+    default: op
   auriongo.command.misc.gamemode:
     description: Разрешает использовать команды смены режима игры (себе и другим)
     default: op

@@ -9,6 +9,7 @@ import dev.toxi.aurionGo.feature.chat.ChatModule;
 import dev.toxi.aurionGo.feature.gamemode.GameModeModule;
 import dev.toxi.aurionGo.feature.integration.IntegrationModule;
 import dev.toxi.aurionGo.feature.player.PlayerDataModule;
+import dev.toxi.aurionGo.feature.playermode.PlayerModeModule;
 import dev.toxi.aurionGo.feature.punishment.PunishmentModule;
 import dev.toxi.aurionGo.feature.servermonitor.ServerMonitorModule;
 import dev.toxi.aurionGo.feature.warn.WarnModule;
@@ -86,6 +87,7 @@ public final class AurionBootstrap {
         this.moduleManager.register(new ChatModule(context));
         this.moduleManager.register(new AfkModule(context));
         this.moduleManager.register(new GameModeModule(context));
+        this.moduleManager.register(new PlayerModeModule(context));
         this.moduleManager.register(new PunishmentModule(context));
         this.moduleManager.register(new WarnModule(context));
         this.moduleManager.register(new IntegrationModule(context));

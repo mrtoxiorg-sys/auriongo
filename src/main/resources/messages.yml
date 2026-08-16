@@ -133,6 +133,27 @@ gamemode:
     staff-notify-other:
       <fcolor:1><i>{actor} изменил режим игры игроку {target} на
       {mode}</i></fcolor:1>
+playermode:
+  god:
+    usage: |-
+      <fcolor:2>╭ Использование</fcolor:2>
+      <fcolor:2>╰</fcolor:2> <fcolor:2>/god [игрок]</fcolor:2>
+    messages:
+      self-change: <fcolor:2>✦</fcolor:2> <fcolor:1>Режим бессмертия</fcolor:1> <fcolor:2>{state}</fcolor:2>
+      target-change: <fcolor:2>✦</fcolor:2> <fcolor:2>{actor}</fcolor:2> <fcolor:1>{state} вам режим бессмертия</fcolor:1>
+      other-change: <fcolor:2>✦</fcolor:2> <fcolor:1>Вы {state} режим бессмертия игроку</fcolor:1> <fcolor:2>{target}</fcolor:2>
+      staff-notify-self: <fcolor:1><i>{actor} {state} свой режим бессмертия</i></fcolor:1>
+      staff-notify-other: <fcolor:1><i>{actor} {state} режим бессмертия игроку {target}</i></fcolor:1>
+  fly:
+    usage: |-
+      <fcolor:2>╭ Использование</fcolor:2>
+      <fcolor:2>╰</fcolor:2> <fcolor:2>/fly [игрок]</fcolor:2>
+    messages:
+      self-change: <fcolor:2>✦</fcolor:2> <fcolor:1>Полёт</fcolor:1> <fcolor:2>{state}</fcolor:2>
+      target-change: <fcolor:2>✦</fcolor:2> <fcolor:2>{actor}</fcolor:2> <fcolor:1>{state} вам полёт</fcolor:1>
+      other-change: <fcolor:2>✦</fcolor:2> <fcolor:1>Вы {state} полёт игроку</fcolor:1> <fcolor:2>{target}</fcolor:2>
+      staff-notify-self: <fcolor:1><i>{actor} {state} свой полёт</i></fcolor:1>
+      staff-notify-other: <fcolor:1><i>{actor} {state} полёт игроку {target}</i></fcolor:1>
 punishments:
   defaults:
     reason: Не указана
