@@ -203,3 +203,9 @@ permissions:
   auriongo.command.punishment.unwarn:
     description: Разрешает использовать /unwarn
     default: op
+  auriongo.command.punishment.banlistsearch:
+    description: Разрешает использовать /banlistsearch
+    default: op
+  auriongo.command.punishment.warnlistsearch:
+    description: Разрешает использовать /warnlistsearch
+    default: op
