@@ -1,5 +1,6 @@
 package dev.toxi.aurionGo.feature.player;
 
+import dev.toxi.aurionGo.feature.integration.InvisibilityBridge;
 import dev.toxi.aurionGo.feature.punishment.PunishmentType;
 import dev.toxi.aurionGo.message.MessageFormatter;
 import dev.toxi.aurionGo.shared.AurionContext;
@@ -494,11 +495,31 @@ public final class PlayerProfileService {
     }
 
     public void sendNicknameActionBar(Player viewer, Player target) {
+        if (!canRevealNickname(viewer, target)) {
+            return;
+        }
+
         viewer.sendActionBar(
             render(
                 "player-data.reveal-nickname",
                 Map.of("player", target.getName())
             )
+        );
+    }
+
+    public boolean canRevealNickname(Player viewer, Player target) {
+        if (viewer == null || target == null) {
+            return false;
+        }
+
+        if (viewer.getUniqueId().equals(target.getUniqueId())) {
+            return true;
+        }
+
+        return !InvisibilityBridge.isConcealedFrom(
+            this.context.plugin(),
+            viewer,
+            target
         );
     }
 
@@ -649,7 +670,7 @@ public final class PlayerProfileService {
         Team team = scoreboard.getTeam(HIDDEN_NAMETAG_TEAM);
         Team currentTeam = scoreboard.getEntryTeam(entry);
 
-        if (shouldHideNametagFrom(target, viewer)) {
+        if (isNametagHiddenFrom(target, viewer)) {
             if (currentTeam != null && currentTeam != team) {
                 return;
             }
@@ -701,7 +722,7 @@ public final class PlayerProfileService {
                 continue;
             }
 
-            if (shouldHideNametagFrom(target, viewer)) {
+            if (isNametagHiddenFrom(target, viewer)) {
                 nameTagManager.hideNameTag(tabPlayer, tabViewer);
                 continue;
             }
@@ -732,7 +753,7 @@ public final class PlayerProfileService {
                 continue;
             }
 
-            if (shouldHideNametagFrom(target, viewer)) {
+            if (isNametagHiddenFrom(target, viewer)) {
                 nameTagManager.hideNameTag(tabTarget, tabViewer);
                 continue;
             }
@@ -743,7 +764,7 @@ public final class PlayerProfileService {
         return true;
     }
 
-    private boolean shouldHideNametagFrom(Player target, Player viewer) {
+    public boolean isNametagHiddenFrom(Player target, Player viewer) {
         return !target.getUniqueId().equals(viewer.getUniqueId()) &&
         hidesNametag(target) &&
         !viewer.hasPermission(NAMETAG_BYPASS_PERMISSION);

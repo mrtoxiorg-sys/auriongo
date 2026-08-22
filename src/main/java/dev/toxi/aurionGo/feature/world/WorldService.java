@@ -1,393 +1,181 @@
 package dev.toxi.aurionGo.feature.world;
 
-import com.google.common.io.ByteArrayDataInput;
-import com.google.common.io.ByteArrayDataOutput;
-import com.google.common.io.ByteStreams;
-import dev.toxi.aurionGo.config.ConfigFile;
 import dev.toxi.aurionGo.config.StandardConfigs;
 import dev.toxi.aurionGo.feature.chat.ChatService;
 import dev.toxi.aurionGo.feature.player.PlayerProfileService;
 import dev.toxi.aurionGo.message.MessageFormatter;
 import dev.toxi.aurionGo.shared.AurionContext;
-import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 import net.kyori.adventure.text.Component;
-import org.bukkit.Particle;
-import org.bukkit.Sound;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.messaging.PluginMessageListener;
 
-public final class WorldService implements PluginMessageListener {
-
-    private static final String CHANNEL = "BungeeCord";
-    private static final long DEFAULT_LOOKUP_TIMEOUT_MILLIS = 5_000L;
+public final class WorldService {
 
     private final AurionContext context;
-    private final ConfigFile worldConfig;
-    private final MessageFormatter formatter;
-    private final Map<UUID, Long> cooldowns = new ConcurrentHashMap<>();
-    private final Map<UUID, Long> combatTags = new ConcurrentHashMap<>();
-    private final Map<UUID, Long> pendingLookups = new ConcurrentHashMap<>();
+    private final MessageFormatter messageFormatter;
+    private final WorldSettings settings;
+    private final WorldSwitchGuard guard;
+    private final WorldMessenger messenger;
 
     public WorldService(AurionContext context) {
         this.context = context;
-        this.worldConfig = context.configManager().require(StandardConfigs.WORLD);
-        this.formatter = context.serviceRegistry().require(MessageFormatter.class);
+        this.messageFormatter = context
+            .serviceRegistry()
+            .require(MessageFormatter.class);
+        this.settings = WorldSettings.from(
+            context.configManager().require(StandardConfigs.WORLD).configuration()
+        );
+        this.guard = new WorldSwitchGuard(this.settings);
+        this.messenger = new WorldMessenger(context.plugin(), this::onCurrentServer);
     }
 
     public void enable() {
-        this.context
-            .plugin()
-            .getServer()
-            .getMessenger()
-            .registerOutgoingPluginChannel(this.context.plugin(), CHANNEL);
-        this.context
-            .plugin()
-            .getServer()
-            .getMessenger()
-            .registerIncomingPluginChannel(this.context.plugin(), CHANNEL, this);
+        this.messenger.register();
     }
 
     public void disable() {
-        this.context
-            .plugin()
-            .getServer()
-            .getMessenger()
-            .unregisterIncomingPluginChannel(this.context.plugin(), CHANNEL, this);
-        this.context
-            .plugin()
-            .getServer()
-            .getMessenger()
-            .unregisterOutgoingPluginChannel(this.context.plugin(), CHANNEL);
-        this.cooldowns.clear();
-        this.combatTags.clear();
-        this.pendingLookups.clear();
+        this.messenger.unregister();
+        this.guard.clear();
     }
 
-    public void switchPlayer(Player player) {
-        long now = System.currentTimeMillis();
-        Settings settings = readSettings();
+    public MessageFormatter formatter() {
+        return this.messageFormatter;
+    }
 
-        if (!settings.isValid()) {
+    public void markCombat(Player player) {
+        this.guard.markCombat(player.getUniqueId());
+    }
+
+    public void forget(Player player) {
+        this.guard.forget(player.getUniqueId());
+    }
+
+    public void requestSwitch(Player player) {
+        if (!this.settings.isValid()) {
             player.sendMessage(render("world.invalid-config", Map.of()));
             return;
         }
 
-        long pendingUntil = this.pendingLookups.getOrDefault(
-            player.getUniqueId(),
-            0L
-        );
+        UUID uniqueId = player.getUniqueId();
+        long now = System.currentTimeMillis();
 
-        if (pendingUntil > now) {
+        if (this.guard.isPending(uniqueId, now)) {
             player.sendMessage(render("world.lookup-pending", Map.of()));
             return;
         }
 
-        this.pendingLookups.remove(player.getUniqueId());
-
-        long combatUntil = this.combatTags.getOrDefault(player.getUniqueId(), 0L);
-
-        if (combatUntil > now) {
-            player.sendMessage(
-                render(
-                    "world.combat-block",
-                    Map.of("seconds", String.valueOf(ceilSeconds(combatUntil - now)))
-                )
-            );
+        if (rejectByTimer(player, "world.combat-block", this.guard.combatRemaining(uniqueId, now))) {
             return;
         }
 
-        this.combatTags.remove(player.getUniqueId());
-
-        long cooldownUntil = this.cooldowns.getOrDefault(player.getUniqueId(), 0L);
-
-        if (cooldownUntil > now) {
-            player.sendMessage(
-                render(
-                    "world.cooldown",
-                    Map.of(
-                        "seconds",
-                        String.valueOf(ceilSeconds(cooldownUntil - now))
-                    )
-                )
-            );
+        if (rejectByTimer(player, "world.cooldown", this.guard.cooldownRemaining(uniqueId, now))) {
             return;
         }
 
-        this.cooldowns.remove(player.getUniqueId());
-        this.pendingLookups.put(player.getUniqueId(), now + settings.lookupTimeoutMillis());
+        this.guard.markPending(uniqueId);
         player.sendMessage(render("world.checking", Map.of()));
-
-        ByteArrayDataOutput out = ByteStreams.newDataOutput();
-        out.writeUTF("GetServer");
-        player.sendPluginMessage(this.context.plugin(), CHANNEL, out.toByteArray());
+        this.messenger.requestCurrentServer(player);
     }
 
-    @Override
-    public void onPluginMessageReceived(String channel, Player player, byte[] message) {
-        if (!CHANNEL.equals(channel)) {
+    private boolean rejectByTimer(Player player, String path, long remainingSeconds) {
+        if (remainingSeconds <= 0L) {
+            return false;
+        }
+
+        player.sendMessage(
+            render(path, Map.of("seconds", Long.toString(remainingSeconds)))
+        );
+        return true;
+    }
+
+    private void onCurrentServer(Player player, String currentServer) {
+        if (!this.guard.consumePending(player.getUniqueId())) {
             return;
         }
 
-        ByteArrayDataInput in = ByteStreams.newDataInput(message);
-        String subChannel = in.readUTF();
-
-        if (!"GetServer".equals(subChannel)) {
+        if (!this.settings.contains(currentServer)) {
+            player.sendMessage(
+                render("world.unsupported-server", Map.of("server", currentServer))
+            );
             return;
         }
 
-        Long pendingUntil = this.pendingLookups.remove(player.getUniqueId());
+        String targetServer = this.settings.nextServer(currentServer);
 
-        if (pendingUntil == null || pendingUntil < System.currentTimeMillis()) {
-            return;
-        }
-
-        String currentServer = in.readUTF();
-        Settings settings = readSettings();
-
-        if (!settings.isValid()) {
+        if (targetServer == null) {
             player.sendMessage(render("world.invalid-config", Map.of()));
             return;
         }
 
-        String targetServer = settings.resolveTarget(currentServer);
-
-        if (targetServer == null) {
-            player.sendMessage(
-                render(
-                    "world.unsupported-server",
-                    Map.of("server", currentServer)
-                )
-            );
-            return;
-        }
-
-        player.getWorld().spawnParticle(
-            Particle.PORTAL,
-            player.getLocation().add(0, 1, 0),
-            100,
-            0.5,
-            1.0,
-            0.5,
-            0.1
-        );
-        player.playSound(
-            player.getLocation(),
-            Sound.ENTITY_ENDERMAN_TELEPORT,
-            1.0f,
-            1.0f
-        );
+        this.guard.markCooldown(player.getUniqueId());
         player.sendMessage(
             render(
                 "world.connecting",
-                Map.of("server", settings.resolveDisplayName(targetServer))
+                Map.of("server", this.settings.displayName(targetServer))
             )
         );
+        announceSwitch(player, currentServer, targetServer);
+        scheduleConnect(player, targetServer);
+    }
+
+    private void scheduleConnect(Player player, String targetServer) {
+        UUID uniqueId = player.getUniqueId();
 
         this.context
             .plugin()
             .getServer()
             .getScheduler()
-            .runTaskLater(this.context.plugin(), () -> {
-                if (!player.isOnline()) {
-                    return;
-                }
-
-                long now = System.currentTimeMillis();
-                long combatUntil = this.combatTags.getOrDefault(
-                    player.getUniqueId(),
-                    0L
-                );
-
-                if (combatUntil > now) {
-                    player.sendMessage(
-                        render(
-                            "world.combat-block",
-                            Map.of(
-                                "seconds",
-                                String.valueOf(ceilSeconds(combatUntil - now))
-                            )
-                        )
-                    );
-                    return;
-                }
-
-                this.cooldowns.put(
-                    player.getUniqueId(),
-                    now + (settings.cooldownSeconds() * 1000L)
-                );
-
-                ChatService chatService = resolveChatService();
-
-                if (chatService != null) {
-                    chatService.broadcastWorldSwitch(
-                        player,
-                        settings.resolveDisplayName(currentServer),
-                        settings.resolveDisplayName(targetServer)
-                    );
-                }
-
-                PlayerProfileService profileService = resolvePlayerProfileService();
-
-                if (profileService != null) {
-                    profileService.suppressNextJoinQuitForWorldSwitch(player);
-                }
-
-                ByteArrayDataOutput out = ByteStreams.newDataOutput();
-                out.writeUTF("Connect");
-                out.writeUTF(targetServer);
-                player.sendPluginMessage(
-                    this.context.plugin(),
-                    CHANNEL,
-                    out.toByteArray()
-                );
-            }, settings.connectDelayTicks());
+            .runTaskLater(
+                this.context.plugin(),
+                () -> connectIfOnline(uniqueId, targetServer),
+                this.settings.connectDelayTicks()
+            );
     }
 
-    public void tagCombat(Player player) {
-        long combatSeconds = Math.max(0, readSettings().combatBlockSeconds());
+    private void connectIfOnline(UUID uniqueId, String targetServer) {
+        Player online = this.context.plugin().getServer().getPlayer(uniqueId);
 
-        if (combatSeconds <= 0) {
-            this.combatTags.remove(player.getUniqueId());
+        if (online == null || !online.isOnline()) {
             return;
         }
 
-        this.combatTags.put(
-            player.getUniqueId(),
-            System.currentTimeMillis() + (combatSeconds * 1000L)
+        this.messenger.connect(online, targetServer);
+    }
+
+    private void announceSwitch(
+        Player player,
+        String fromServer,
+        String targetServer
+    ) {
+        PlayerProfileService profileService = optionalService(
+            PlayerProfileService.class
         );
-    }
 
-    public void clear(Player player) {
-        UUID uniqueId = player.getUniqueId();
-        this.pendingLookups.remove(uniqueId);
-        this.cooldowns.remove(uniqueId);
-        this.combatTags.remove(uniqueId);
-    }
+        if (profileService != null) {
+            profileService.suppressNextJoinQuitForWorldSwitch(player);
+        }
 
-    public Component renderNoPermission() {
-        return render("errors.no-permission", Map.of());
-    }
+        ChatService chatService = optionalService(ChatService.class);
 
-    public Component renderPlayerOnly() {
-        return render("errors.player-only", Map.of());
-    }
-
-    private ChatService resolveChatService() {
-        try {
-            return this.context.serviceRegistry().require(ChatService.class);
-        } catch (IllegalStateException exception) {
-            return null;
+        if (chatService != null) {
+            chatService.broadcastWorldSwitch(
+                player,
+                this.settings.displayName(fromServer),
+                this.settings.displayName(targetServer)
+            );
         }
     }
 
-    private PlayerProfileService resolvePlayerProfileService() {
+    private <T> T optionalService(Class<T> type) {
         try {
-            return this.context.serviceRegistry().require(PlayerProfileService.class);
+            return this.context.serviceRegistry().require(type);
         } catch (IllegalStateException exception) {
             return null;
         }
     }
 
     private Component render(String path, Map<String, String> placeholders) {
-        return this.formatter.render(path, placeholders);
-    }
-
-    private Settings readSettings() {
-        List<String> servers = this.worldConfig
-            .configuration()
-            .getStringList("servers")
-            .stream()
-            .map(String::trim)
-            .filter(server -> !server.isEmpty())
-            .distinct()
-            .toList();
-        int cooldownSeconds = Math.max(
-            0,
-            this.worldConfig.configuration().getInt("cooldown-seconds", 10)
-        );
-        int combatBlockSeconds = Math.max(
-            0,
-            this.worldConfig.configuration().getInt("combat-block-seconds", 15)
-        );
-        long connectDelayTicks = Math.max(
-            0L,
-            this.worldConfig.configuration().getLong("connect-delay-ticks", 10L)
-        );
-        long lookupTimeoutMillis = Math.max(
-            1000L,
-            this.worldConfig
-                .configuration()
-                .getLong(
-                    "lookup-timeout-millis",
-                    DEFAULT_LOOKUP_TIMEOUT_MILLIS
-                )
-        );
-        Map<String, String> displayNames = new LinkedHashMap<>();
-
-        for (String server : servers) {
-            String configuredDisplayName = this.worldConfig
-                .configuration()
-                .getString("display-names." + server);
-
-            displayNames.put(
-                server.toLowerCase(java.util.Locale.ROOT),
-                configuredDisplayName == null || configuredDisplayName.isBlank()
-                    ? server
-                    : configuredDisplayName.trim()
-            );
-        }
-
-        return new Settings(
-            servers,
-            cooldownSeconds,
-            combatBlockSeconds,
-            connectDelayTicks,
-            lookupTimeoutMillis,
-            displayNames
-        );
-    }
-
-    private long ceilSeconds(long millisLeft) {
-        return Math.max(1L, (millisLeft + 999L) / 1000L);
-    }
-
-    private record Settings(
-        List<String> servers,
-        int cooldownSeconds,
-        int combatBlockSeconds,
-        long connectDelayTicks,
-        long lookupTimeoutMillis,
-        Map<String, String> displayNames
-    ) {
-        private boolean isValid() {
-            return this.servers.size() == 2;
-        }
-
-        private String resolveTarget(String currentServer) {
-            if (!isValid()) {
-                return null;
-            }
-
-            if (this.servers.get(0).equalsIgnoreCase(currentServer)) {
-                return this.servers.get(1);
-            }
-
-            if (this.servers.get(1).equalsIgnoreCase(currentServer)) {
-                return this.servers.get(0);
-            }
-
-            return null;
-        }
-
-        private String resolveDisplayName(String server) {
-            return this.displayNames.getOrDefault(
-                    server.toLowerCase(java.util.Locale.ROOT),
-                    server
-                );
-        }
+        return this.messageFormatter.render(path, placeholders);
     }
 }

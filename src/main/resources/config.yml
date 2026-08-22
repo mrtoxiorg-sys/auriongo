@@ -1,4 +1,4 @@
-config-version: 4
+config-version: 5
 
 modules:
   afk:
@@ -18,6 +18,8 @@ modules:
   servermonitor:
     enabled: true
   world:
+    enabled: true
+  spectral:
     enabled: true
 
 theme:

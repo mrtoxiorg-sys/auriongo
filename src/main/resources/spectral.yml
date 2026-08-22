@@ -1,0 +1,39 @@
+config-version: 1
+
+# Спектральное зелье: раскрывает игроков под невидимостью.
+# Модуль включается/выключается через modules.spectral.enabled в config.yml.
+# Кастомные рецепты зельеварки регистрируются при enable и снимаются при disable/reload.
+
+brewing:
+  # false — рецепты не регистрируются вообще, предметы остаются недоступными для варки.
+  enabled: true
+  # Бутылочка воды + этот ингредиент = Мутноватое зелье.
+  murky-ingredient: BONE_MEAL
+  # Мутноватое зелье + этот ингредиент = Спектральное зелье (бросаемое).
+  spectral-ingredient: GLOWSTONE_DUST
+  # Спектральное зелье + этот ингредиент = взрывное (lingering) спектральное зелье.
+  lingering-enabled: true
+  lingering-ingredient: DRAGON_BREATH
+
+glowing:
+  # Длительность эффекта glowing при попадании выбирается случайно из этого диапазона.
+  min-seconds: 30
+  max-seconds: 60
+  # true — эффект накидывается только на скрытые цели (невидимость по NBT/зелью или vanish).
+  only-invisible: true
+  # true — зелье действует и на мобов, а не только на игроков.
+  affect-mobs: false
+
+items:
+  murky:
+    name: "<gray>Мутноватое зелье</gray>"
+    color: "#C9C9C4"
+    glint: false
+    lore:
+      - "<dark_gray>Что-то мутное плавает внутри.</dark_gray>"
+  spectral:
+    name: "<gradient:#FFE259:#F2A100>Спектральное зелье</gradient>"
+    color: "#F2C200"
+    glint: true
+    lore:
+      - "<gray>Подсвечивает тех, кто прячется.</gray>"

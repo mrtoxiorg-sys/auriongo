@@ -12,6 +12,7 @@ import dev.toxi.aurionGo.feature.playermode.PlayerModeModule;
 import dev.toxi.aurionGo.feature.player.PlayerDataModule;
 import dev.toxi.aurionGo.feature.punishment.PunishmentModule;
 import dev.toxi.aurionGo.feature.servermonitor.ServerMonitorModule;
+import dev.toxi.aurionGo.feature.spectral.SpectralModule;
 import dev.toxi.aurionGo.feature.warn.WarnModule;
 import dev.toxi.aurionGo.feature.world.WorldModule;
 import dev.toxi.aurionGo.message.ConfigBackedMessageService;
@@ -48,6 +49,7 @@ public final class AurionBootstrap {
         this.configManager.register(StandardConfigs.INTEGRATIONS);
         this.configManager.register(StandardConfigs.SERVER_MONITOR);
         this.configManager.register(StandardConfigs.WORLD);
+        this.configManager.register(StandardConfigs.SPECTRAL);
 
         this.serviceRegistry = new ServiceRegistry();
         this.serviceRegistry.register(ConfigManager.class, this.configManager);
@@ -93,6 +95,7 @@ public final class AurionBootstrap {
         this.moduleManager.register(new IntegrationModule(context));
         this.moduleManager.register(new ServerMonitorModule(context));
         this.moduleManager.register(new WorldModule(context));
+        this.moduleManager.register(new SpectralModule(context));
         registerRootCommand();
         this.moduleManager.enableAll();
     }

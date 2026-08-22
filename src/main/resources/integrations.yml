@@ -7,4 +7,5 @@ placeholderapi:
 simple-voice-chat:
   hook: true
   mirror-mutes: true
+  hidden-nametag-speaking-indicator: true
   fail-silently: true

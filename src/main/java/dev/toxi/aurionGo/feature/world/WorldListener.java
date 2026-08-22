@@ -1,13 +1,10 @@
 package dev.toxi.aurionGo.feature.world;
 
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 public final class WorldListener implements Listener {
@@ -19,35 +16,24 @@ public final class WorldListener implements Listener {
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onPlayerDamage(EntityDamageEvent event) {
-        if (event.getEntity() instanceof Player player) {
-            this.service.tagCombat(player);
+    public void onDamage(EntityDamageByEntityEvent event) {
+        if (
+            !(event.getEntity() instanceof Player victim) ||
+            !(event.getDamager() instanceof Player attacker)
+        ) {
+            return;
         }
+
+        if (victim.getUniqueId().equals(attacker.getUniqueId())) {
+            return;
+        }
+
+        this.service.markCombat(victim);
+        this.service.markCombat(attacker);
     }
 
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onPlayerDealDamage(EntityDamageByEntityEvent event) {
-        Player attacker = resolveAttacker(event.getDamager());
-
-        if (attacker != null) {
-            this.service.tagCombat(attacker);
-        }
-    }
-
-    @EventHandler
+    @EventHandler(priority = EventPriority.MONITOR)
     public void onQuit(PlayerQuitEvent event) {
-        this.service.clear(event.getPlayer());
-    }
-
-    private Player resolveAttacker(Entity entity) {
-        if (entity instanceof Player player) {
-            return player;
-        }
-
-        if (entity instanceof Projectile projectile && projectile.getShooter() instanceof Player player) {
-            return player;
-        }
-
-        return null;
+        this.service.forget(event.getPlayer());
     }
 }

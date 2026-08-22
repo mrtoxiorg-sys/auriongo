@@ -1,6 +1,7 @@
 package dev.toxi.aurionGo.feature.integration;
 
 import dev.toxi.aurionGo.config.StandardConfigs;
+import dev.toxi.aurionGo.feature.player.PlayerProfileService;
 import dev.toxi.aurionGo.feature.punishment.PunishmentService;
 import dev.toxi.aurionGo.module.PluginModule;
 import dev.toxi.aurionGo.shared.AurionContext;
@@ -31,46 +32,79 @@ public final class IntegrationModule implements PluginModule {
     }
 
     private void enableSimpleVoiceChat(FileConfiguration configuration) {
-        if (
-            !configuration.getBoolean("simple-voice-chat.hook", true) ||
-            !configuration.getBoolean("simple-voice-chat.mirror-mutes", true) ||
-            !this.context
-                .configManager()
-                .require(StandardConfigs.PUNISHMENTS)
-                .configuration()
-                .getBoolean("mutes.sync-with-voice-chat", true)
-        ) {
+        if (!configuration.getBoolean("simple-voice-chat.hook", true)) {
             return;
         }
 
-        PunishmentService punishmentService;
+        boolean mirrorMutes = configuration.getBoolean("simple-voice-chat.mirror-mutes", true) &&
+            this.context
+                .configManager()
+                .require(StandardConfigs.PUNISHMENTS)
+                .configuration()
+                .getBoolean("mutes.sync-with-voice-chat", true);
+        boolean speakingIndicator = configuration.getBoolean(
+            "simple-voice-chat.hidden-nametag-speaking-indicator",
+            true
+        );
 
-        try {
-            punishmentService = this.context
-                .serviceRegistry()
-                .require(PunishmentService.class);
-        } catch (IllegalStateException exception) {
-            if (
-                !configuration.getBoolean(
-                    "simple-voice-chat.fail-silently",
-                    true
-                )
-            ) {
-                this.context
-                    .plugin()
-                    .getLogger()
-                    .warning(
-                        "Интеграция с Simple Voice Chat пропущена: сервис мутов недоступен."
-                    );
-            }
+        PunishmentService punishmentService = mirrorMutes
+            ? resolvePunishmentService(configuration)
+            : null;
+        PlayerProfileService profileService = speakingIndicator
+            ? resolvePlayerProfileService(configuration)
+            : null;
+
+        if (punishmentService == null && profileService == null) {
             return;
         }
 
         this.simpleVoiceChatBridge = new SimpleVoiceChatBridge(
             this.context,
-            punishmentService
+            punishmentService,
+            profileService
         );
         this.simpleVoiceChatBridge.enable();
+    }
+
+    private PunishmentService resolvePunishmentService(
+        FileConfiguration configuration
+    ) {
+        try {
+            return this.context
+                .serviceRegistry()
+                .require(PunishmentService.class);
+        } catch (IllegalStateException exception) {
+            warnUnavailable(
+                configuration,
+                "Интеграция мутов с Simple Voice Chat пропущена: сервис мутов недоступен."
+            );
+            return null;
+        }
+    }
+
+    private PlayerProfileService resolvePlayerProfileService(
+        FileConfiguration configuration
+    ) {
+        try {
+            return this.context
+                .serviceRegistry()
+                .require(PlayerProfileService.class);
+        } catch (IllegalStateException exception) {
+            warnUnavailable(
+                configuration,
+                "Индикатор Simple Voice Chat для скрытых ников пропущен: сервис профилей игроков недоступен."
+            );
+            return null;
+        }
+    }
+
+    private void warnUnavailable(
+        FileConfiguration configuration,
+        String message
+    ) {
+        if (!configuration.getBoolean("simple-voice-chat.fail-silently", true)) {
+            this.context.plugin().getLogger().warning(message);
+        }
     }
 
     @Override

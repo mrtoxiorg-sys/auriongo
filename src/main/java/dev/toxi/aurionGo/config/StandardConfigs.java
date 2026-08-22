@@ -11,6 +11,7 @@ public final class StandardConfigs {
     public static final ConfigDefinition INTEGRATIONS = new ConfigDefinition("integrations", "integrations.yml");
     public static final ConfigDefinition SERVER_MONITOR = new ConfigDefinition("server-monitor", "servermonitor.yml");
     public static final ConfigDefinition WORLD = new ConfigDefinition("world", "world.yml");
+    public static final ConfigDefinition SPECTRAL = new ConfigDefinition("spectral", "spectral.yml");
 
     private StandardConfigs() {
     }
