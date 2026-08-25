@@ -56,6 +56,10 @@ public final class DatabaseManager implements AutoCloseable {
         };
     }
 
+    public DatabaseType type() {
+        return this.type;
+    }
+
     @Override
     public void close() {
         // DriverManager-based access does not require an explicit shutdown hook.
@@ -70,6 +74,7 @@ public final class DatabaseManager implements AutoCloseable {
             ensurePlayerColumns(connection, statement);
             statement.execute(playerIpHistoryTableSql());
             statement.execute(punishmentsTableSql());
+            statement.execute(ignoresTableSql());
         } catch (SQLException exception) {
             throw new IllegalStateException(
                 "Не удалось создать схему базы данных AurionGo.",
@@ -203,6 +208,18 @@ public final class DatabaseManager implements AutoCloseable {
             first_seen BIGINT NOT NULL,
             last_seen BIGINT NOT NULL,
             PRIMARY KEY (player_uuid, ip_address)
+        )
+        """;
+    }
+
+    private String ignoresTableSql() {
+        return """
+        CREATE TABLE IF NOT EXISTS aurion_player_ignores (
+            player_uuid VARCHAR(36) NOT NULL,
+            ignored_uuid VARCHAR(36) NOT NULL,
+            ignored_nickname VARCHAR(16) NOT NULL,
+            created_at BIGINT NOT NULL,
+            PRIMARY KEY (player_uuid, ignored_uuid)
         )
         """;
     }
