@@ -6,6 +6,7 @@ import dev.toxi.aurionGo.feature.integration.SuperVanishBridge;
 import dev.toxi.aurionGo.feature.player.PlayerProfileService;
 import dev.toxi.aurionGo.message.MessageFormatter;
 import dev.toxi.aurionGo.shared.AurionContext;
+import dev.toxi.aurionGo.storage.player.PlayerIgnoreRepository;
 import io.papermc.paper.event.player.AsyncChatEvent;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -36,6 +37,7 @@ public final class ChatService {
     private final MessageFormatter messageFormatter;
     private final PlayerProfileService playerProfileService;
     private final PlaceholderApiBridge placeholderApiBridge;
+    private PlayerIgnoreRepository ignoreRepository;
     private Method interactiveChatMarkSenderMethod;
     private final ReplyTracker replyTracker = new ReplyTracker();
     private final MiniMessage miniMessage = MiniMessage.miniMessage();
